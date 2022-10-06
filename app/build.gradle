@@ -18,8 +18,11 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
+        all {
+            buildConfigField "String", "BASE_URL", '"https://api.openweathermap.org/"'
+            buildConfigField "String", "API_KEY", '"0395f8bf46e08bf66b69b999b1a85d64"'
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -56,6 +59,11 @@ dependencies {
     // region Dependency Injection
     implementation "io.insert-koin:koin-core:$koin_version"
     implementation "io.insert-koin:koin-android:$koin_android_version"
+    // endregion
+
+    // region Networking
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     // endregion
 
     // region Other
