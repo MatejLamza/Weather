@@ -1,5 +1,6 @@
 package com.example.weatherlamza.common.base
 
+import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +15,10 @@ open class BaseFragment<VB : ViewBinding>(
 
     companion object {
         const val TAG = "BaseFragment"
+        val permissions = arrayListOf<String>(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
     }
 
     private var _binding: VB? = null
@@ -42,7 +47,6 @@ open class BaseFragment<VB : ViewBinding>(
 
     override fun onDestroyView() {
         super.onDestroyView()
-//        runCatching { progressDialog.dismiss() }
         _binding = null
     }
 }
