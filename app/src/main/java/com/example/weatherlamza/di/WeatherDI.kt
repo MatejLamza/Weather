@@ -2,6 +2,8 @@ package com.example.weatherlamza.di
 
 import android.app.Application
 import com.example.weatherlamza.di.modules.networkModule
+import com.example.weatherlamza.di.modules.repositoryModule
+import com.example.weatherlamza.di.modules.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.KoinApplication
@@ -13,7 +15,9 @@ class WeatherDI(private val application: Application) {
 
     private lateinit var koinApplication: KoinApplication
     private val modules: List<Module> = listOf(
-        networkModule
+        networkModule,
+        repositoryModule,
+        viewModelModule
     )
 
     fun initialize() {
