@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentWeatherBinding
+import com.example.weatherlamza.utils.extensions.observeState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBinding::inflate) {
@@ -20,6 +21,9 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
         with(weatherViewModel) {
             weather.observe(viewLifecycleOwner) { location ->
                 binding.currentTemperature.text = location.temperature.temperature.toString()
+            }
+
+            weatherState.observeState(viewLifecycleOwner, this@WeatherFragment) {
             }
         }
     }
