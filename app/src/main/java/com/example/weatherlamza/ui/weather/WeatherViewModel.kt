@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.jetweatherapp.data.model.Location
 import com.example.weatherlamza.common.state.State
 import com.example.weatherlamza.data.repositories.WeatherRepository
+import com.example.weatherlamza.utils.extensions.launch
 import com.example.weatherlamza.utils.extensions.launchWithState
 
 class WeatherViewModel(private val weatherRepo: WeatherRepository) : ViewModel() {
@@ -24,4 +25,14 @@ class WeatherViewModel(private val weatherRepo: WeatherRepository) : ViewModel()
         }
     }
 
+    fun getWeatherForCurrentLocation(location: android.location.Location) {
+        launch {
+            weatherRepo.getWeatherForCoordinates(location.latitude, location.longitude).collect {
+                _weather.value = it
+            }
+        }
+    }
+
 }
+
+

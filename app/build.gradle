@@ -66,10 +66,15 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     // endregion
 
+
+
     // region Other
     implementation "com.github.bumptech.glide:glide:$glide"
     implementation "com.facebook.shimmer:shimmer:$shimmer"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swipe_refresh"
+    implementation "com.guolindev.permissionx:permissionx:$permissions_version"
+    implementation 'com.google.android.gms:play-services-location:20.0.0'
+    implementation "dev.shreyaspatil.permission-flow:permission-flow-android:1.0.0"
 
     // endregion
 
