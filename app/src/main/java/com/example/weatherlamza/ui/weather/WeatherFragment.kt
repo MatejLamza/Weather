@@ -55,7 +55,8 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
         checkPermissions(permissions,
             onSuccess = {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                    weatherViewModel.getWeatherForCurrentLocation(location)
+
+                weatherViewModel.getWeatherForCurrentLocation(location)
                 }
             },
             onError = {
