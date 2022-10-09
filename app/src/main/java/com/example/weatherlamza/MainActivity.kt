@@ -4,7 +4,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.PeriodicWorkRequestBuilder
@@ -41,12 +40,9 @@ class MainActivity : AppCompatActivity() {
             )
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
-            Log.d("bbb", "Created notification channel")
         }
 
-        workManager.observe(this) {
-            Log.d("bbb", "onCreate: $it")
-        }
+        workManager.observe(this) {}
     }
 
 }

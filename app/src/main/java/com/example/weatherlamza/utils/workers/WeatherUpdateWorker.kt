@@ -20,11 +20,12 @@ class WeatherUpdateWorker(private val context: Context, workerParams: WorkerPara
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
             return@withContext kotlin.runCatching {
-                Log.d("bbb", "doWork called pinging api")
+                var description = ""
                 weatherRepo.getWeather("Zagreb").collect {
+                    description = it.weather.get(0).description ?: ""
                     Log.d("bbb", "API CALL RESULT: ${it.temperature.temperature}")
                 }
-                notificationService.showNotification()
+                notificationService.showNotification(title = "Weather warning", description)
                 Result.success()
             }.getOrDefault(Result.failure())
         }
