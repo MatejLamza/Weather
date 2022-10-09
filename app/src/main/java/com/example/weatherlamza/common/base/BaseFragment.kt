@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.example.weatherlamza.navigation.NavigationViewModel
 import com.example.weatherlamza.utils.ViewBindingInflate
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 open class BaseFragment<VB : ViewBinding>(
     private val inflate: ViewBindingInflate<VB>,
@@ -23,6 +25,8 @@ open class BaseFragment<VB : ViewBinding>(
 
     private var _binding: VB? = null
     val binding: VB get() = _binding!!
+
+    protected val navigation by viewModel<NavigationViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

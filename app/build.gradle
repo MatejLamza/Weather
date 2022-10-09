@@ -75,6 +75,8 @@ dependencies {
     implementation "com.guolindev.permissionx:permissionx:$permissions_version"
     implementation 'com.google.android.gms:play-services-location:20.0.0'
     implementation "dev.shreyaspatil.permission-flow:permission-flow-android:1.0.0"
+    implementation "androidx.work:work-runtime-ktx:2.7.1"
+
 
     // endregion
 

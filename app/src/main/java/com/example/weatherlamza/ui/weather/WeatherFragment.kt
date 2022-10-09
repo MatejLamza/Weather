@@ -44,9 +44,15 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
     }
 
     private fun setupListeners() {
-        binding.weatherContent.setOnRefreshListener {
-            requestLastLocation()
-            binding.weatherContent.isRefreshing = false
+
+        with(binding) {
+            weatherContent.setOnRefreshListener {
+                requestLastLocation()
+                binding.weatherContent.isRefreshing = false
+            }
+            currentTemperature.setOnClickListener {
+                navigation.navigateToSettings(this@WeatherFragment)
+            }
         }
     }
 
@@ -55,6 +61,7 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
         checkPermissions(permissions,
             onSuccess = {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+
                     weatherViewModel.getWeatherForCurrentLocation(location)
                 }
             },
