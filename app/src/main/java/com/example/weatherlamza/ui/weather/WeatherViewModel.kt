@@ -33,6 +33,12 @@ class WeatherViewModel(private val weatherRepo: WeatherRepository) : ViewModel()
         }
     }
 
+    fun getWeatherForQuery(query: String) {
+        launch {
+            weatherRepo.getWeather(query).collect {
+                _weather.value = it
+            }
+        }
+    }
 }
-
 

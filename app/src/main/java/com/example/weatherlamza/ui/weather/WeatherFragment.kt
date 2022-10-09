@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentWeatherBinding
 import com.example.weatherlamza.utils.extensions.checkPermissions
@@ -12,7 +13,8 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBinding::inflate) {
+class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBinding::inflate),
+    SearchView.OnQueryTextListener {
 
     private val weatherViewModel by viewModel<WeatherViewModel>()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -25,8 +27,15 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setUI()
         setupObservers()
         setupListeners()
+    }
+
+    private fun setUI() {
+        with(binding) {
+            search.setOnQueryTextListener(this@WeatherFragment)
+        }
     }
 
     private fun setupObservers() {
@@ -38,14 +47,9 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        requestLastLocation()
-    }
-
     private fun setupListeners() {
-
         with(binding) {
+            // TODO refresh for current city not for last location
             weatherContent.setOnRefreshListener {
                 requestLastLocation()
                 binding.weatherContent.isRefreshing = false
@@ -53,6 +57,7 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
             currentTemperature.setOnClickListener {
                 navigation.navigateToSettings(this@WeatherFragment)
             }
+
         }
     }
 
@@ -72,6 +77,19 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
                     Toast.LENGTH_SHORT
                 ).show()
             })
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        binding.search.clearFocus()
+        query?.let { weatherViewModel.getWeatherForQuery(it) }
+        return true
+    }
+
+    override fun onQueryTextChange(newText: String?): Boolean = true
+
+    override fun onResume() {
+        super.onResume()
+        requestLastLocation()
     }
 
 }
