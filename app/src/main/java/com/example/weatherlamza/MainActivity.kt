@@ -4,11 +4,15 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.asLiveData
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.weatherlamza.data.local.SessionPrefs
 import com.example.weatherlamza.utils.workers.WeatherUpdateWorker
+import org.koin.java.KoinJavaComponent.inject
 import java.util.concurrent.TimeUnit
 
 
@@ -18,6 +22,8 @@ class MainActivity : AppCompatActivity() {
         const val NOTIFICATION_CHANNEL_ID = "weather_report"
         const val WORKER_DATA_ID = "worker_tag"
     }
+
+    private val sessionPrefs by inject<SessionPrefs>(SessionPrefs::class.java)
 
     @RequiresApi(Build.VERSION_CODES.O)
     val refreshWeatherInfoRequest =
@@ -42,7 +48,15 @@ class MainActivity : AppCompatActivity() {
             notificationManager.createNotificationChannel(channel)
         }
 
+        setObservers()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setObservers() {
         workManager.observe(this) {}
+        sessionPrefs.observePermissionForNotifications().asLiveData().observe(this) { isPermitted ->
+            Log.d("bbb", "Are notifications permitted: $isPermitted ")
+        }
     }
 
 }
