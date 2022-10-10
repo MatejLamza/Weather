@@ -1,6 +1,7 @@
 package com.example.weatherlamza.data.network
 
 import com.example.weatherlamza.data.models.Coordinates
+import com.example.weatherlamza.data.models.Forecast
 import com.example.weatherlamza.data.models.Location
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -18,4 +19,10 @@ interface WeatherAPI {
     suspend fun getLocationCoordinatesByName(
         @Query("q") city: String
     ): List<Coordinates>
+
+    @GET("/data/2.5/forecast")
+    suspend fun getThreeDayForecast(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double
+    ): Forecast
 }

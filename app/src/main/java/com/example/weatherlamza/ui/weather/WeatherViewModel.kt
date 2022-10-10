@@ -1,5 +1,6 @@
 package com.example.weatherlamza.ui.weather
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -29,6 +30,14 @@ class WeatherViewModel(private val weatherRepo: WeatherRepository) : ViewModel()
         launch {
             weatherRepo.getWeatherForCoordinates(location.latitude, location.longitude).collect {
                 _weather.value = it
+            }
+        }
+    }
+
+    fun getForecastForCurrentLocation(location: android.location.Location) {
+        launch {
+            weatherRepo.getForecast(location.latitude, location.longitude).collect {
+                Log.d("bbb", "Forecast : \n $it ")
             }
         }
     }

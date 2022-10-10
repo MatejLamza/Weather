@@ -2,6 +2,7 @@ package com.example.weatherlamza.data.repositories.impl
 
 import com.example.weatherlamza.data.local.dao.WeatherForecastDAO
 import com.example.weatherlamza.data.models.Coordinates
+import com.example.weatherlamza.data.models.Forecast
 import com.example.weatherlamza.data.models.Location
 import com.example.weatherlamza.data.network.WeatherAPI
 import com.example.weatherlamza.data.repositories.WeatherRepository
@@ -40,5 +41,9 @@ class WeatherRepositoryImpl(
             val coordinates = getCoordinates(cityName).first()
             getWeatherForCoordinates(coordinates.lat, coordinates.lon)
         }
+
+    override fun getForecast(lat: Double, lon: Double): Flow<Forecast> = flow {
+        emit(api.getThreeDayForecast(lat, lon))
+    }.flowOn(coroutineDispatcher)
 
 }
