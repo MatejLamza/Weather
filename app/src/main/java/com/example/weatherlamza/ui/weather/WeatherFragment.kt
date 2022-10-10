@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.widget.SearchView
 import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentWeatherBinding
 import com.example.weatherlamza.ui.weather.adapters.DailyWeatherForecastAdapter
@@ -14,8 +13,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBinding::inflate),
-    SearchView.OnQueryTextListener {
+class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBinding::inflate) {
 
     private val weatherViewModel by viewModel<WeatherViewModel>()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -38,7 +36,7 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
 
     private fun setUI() {
         with(binding) {
-            search.setOnQueryTextListener(this@WeatherFragment)
+
             forecast.adapter = dailyForecastAdapter
         }
     }
@@ -88,13 +86,13 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
             })
     }
 
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        binding.search.clearFocus()
-        query?.let { weatherViewModel.getWeatherForQuery(it) }
-        return true
-    }
-
-    override fun onQueryTextChange(newText: String?): Boolean = true
+//    override fun onQueryTextSubmit(query: String?): Boolean {
+//        binding.search.clearFocus()
+//        query?.let { weatherViewModel.getWeatherForQuery(it) }
+//        return true
+//    }
+//
+//    override fun onQueryTextChange(newText: String?): Boolean = true
 
     override fun onResume() {
         super.onResume()

@@ -5,9 +5,13 @@
       <map>
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.3734375" />
         <entry key="app/src/main/res/layout/fragment_current_weather.xml" value="0.3723958333333333" />
+        <entry key="app/src/main/res/layout/fragment_search.xml" value="0.3020833333333333" />
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.2361111111111111" />
         <entry key="app/src/main/res/layout/fragment_weather.xml" value="0.2564814814814815" />
+        <entry key="app/src/main/res/layout/item_recently_searched.xml" value="0.32135416666666666" />
         <entry key="app/src/main/res/layout/item_weather.xml" value="0.33645833333333336" />
+        <entry key="app/src/main/res/layout/slice_recent_search.xml" value="0.32135416666666666" />
+        <entry key="app/src/main/res/menu/drawer_menu.xml" value="0.3020833333333333" />
       </map>
     </option>
   </component>
