@@ -5,3 +5,6 @@ import com.example.weatherlamza.data.models.WeatherData
 
 val WeatherData.currentDateString
     get() = dtText.trim().split(" ").first().trim()
+
+val WeatherData.currentDate
+    get() = currentDateString.toLocalDate

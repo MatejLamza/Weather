@@ -7,6 +7,7 @@ import com.example.weatherlamza.data.models.Location
 import com.example.weatherlamza.data.models.WeatherData
 import com.example.weatherlamza.data.network.WeatherAPI
 import com.example.weatherlamza.data.repositories.WeatherRepository
+import com.example.weatherlamza.utils.extensions.currentDate
 import com.example.weatherlamza.utils.extensions.currentDateString
 import com.example.weatherlamza.utils.extensions.mappers.toEntity
 import kotlinx.coroutines.CoroutineDispatcher
@@ -52,26 +53,20 @@ class WeatherRepositoryImpl(
     }.flowOn(coroutineDispatcher)
 
     private fun getNextThreeDayForecast(forecast: Forecast): List<WeatherData> {
-        val currentDateStr = forecast.weatherData[0].currentDateString
-
-        val currentDate = LocalDate.parse(currentDateStr)
-
+        val currentDate = forecast.weatherData[0].currentDate
         val targetDate = currentDate.plusDays(3)
-
+        val threeDayForecast = mutableListOf<WeatherData>()
 
         val filteredList = forecast.weatherData.filter {
             LocalDate.parse(it.currentDateString) <= targetDate
         }
 
         var dateToday = currentDate
-        val threeDayForecast = mutableListOf<WeatherData>()
 
         while (dateToday <= targetDate) {
-            val maxForThisDay = filteredList.filter {
-                LocalDate.parse(
-                    it.currentDateString
-                ) == dateToday
-            }.maxBy { it.temperature.tempMax }
+            val maxForThisDay = filteredList
+                .filter { it.currentDate == dateToday }
+                .maxBy { it.temperature.tempMax }
 
             threeDayForecast.add(maxForThisDay)
             dateToday = dateToday.plusDays(1)
