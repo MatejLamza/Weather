@@ -10,7 +10,7 @@ import org.koin.dsl.module
 val repositoryModule = module {
 
     single<WeatherRepository> {
-        WeatherRepositoryImpl(api = get())
+        WeatherRepositoryImpl(api = get(), weatherDB = get())
     }
 
     single<SessionRepository> { SessionRepositoryImpl(sessionPrefs = get()) }
