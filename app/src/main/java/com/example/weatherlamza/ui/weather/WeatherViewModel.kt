@@ -3,8 +3,8 @@ package com.example.weatherlamza.ui.weather
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.jetweatherapp.data.model.Location
 import com.example.weatherlamza.common.state.State
+import com.example.weatherlamza.data.models.Location
 import com.example.weatherlamza.data.repositories.WeatherRepository
 import com.example.weatherlamza.utils.extensions.launch
 import com.example.weatherlamza.utils.extensions.launchWithState
@@ -33,6 +33,12 @@ class WeatherViewModel(private val weatherRepo: WeatherRepository) : ViewModel()
         }
     }
 
+    fun getWeatherForQuery(query: String) {
+        launch {
+            weatherRepo.getWeather(query).collect {
+                _weather.value = it
+            }
+        }
+    }
 }
-
 

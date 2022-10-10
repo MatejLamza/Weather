@@ -1,7 +1,7 @@
 package com.example.weatherlamza.data.repositories
 
-import com.example.jetweatherapp.data.model.Coordinates
-import com.example.jetweatherapp.data.model.Location
+import com.example.weatherlamza.data.models.Coordinates
+import com.example.weatherlamza.data.models.Location
 import kotlinx.coroutines.flow.Flow
 
 interface WeatherRepository {

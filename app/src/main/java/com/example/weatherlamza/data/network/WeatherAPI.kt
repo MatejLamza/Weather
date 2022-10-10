@@ -1,7 +1,7 @@
 package com.example.weatherlamza.data.network
 
-import com.example.jetweatherapp.data.model.Coordinates
-import com.example.jetweatherapp.data.model.Location
+import com.example.weatherlamza.data.models.Coordinates
+import com.example.weatherlamza.data.models.Location
 import retrofit2.http.GET
 import retrofit2.http.Query
 
