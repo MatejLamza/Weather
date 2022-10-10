@@ -1,11 +1,11 @@
 package com.example.weatherlamza.ui.weather
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.weatherlamza.common.state.State
 import com.example.weatherlamza.data.models.Location
+import com.example.weatherlamza.data.models.WeatherData
 import com.example.weatherlamza.data.repositories.WeatherRepository
 import com.example.weatherlamza.utils.extensions.launch
 import com.example.weatherlamza.utils.extensions.launchWithState
@@ -14,6 +14,9 @@ class WeatherViewModel(private val weatherRepo: WeatherRepository) : ViewModel()
 
     private var _weather = MutableLiveData<Location>()
     val weather: LiveData<Location> = _weather
+
+    private var _dailyForecast = MutableLiveData<List<WeatherData>>()
+    val dailyForecast: LiveData<List<WeatherData>> = _dailyForecast
 
     private var _weatherState = MutableLiveData<State>()
     val weatherState: LiveData<State> = _weatherState
@@ -37,11 +40,7 @@ class WeatherViewModel(private val weatherRepo: WeatherRepository) : ViewModel()
     fun getForecastForCurrentLocation(location: android.location.Location) {
         launch {
             weatherRepo.getForecast(location.latitude, location.longitude).collect {
-
-                Log.d("bbb", "Forecast size: ${it.weatherData.size}")
-                it.weatherData.forEach {
-                    Log.d("bbb", "Data :$it ")
-                }
+                _dailyForecast.value = it.weatherData
             }
         }
     }

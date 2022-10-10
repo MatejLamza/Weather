@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentWeatherBinding
+import com.example.weatherlamza.ui.weather.adapters.DailyWeatherForecastAdapter
 import com.example.weatherlamza.utils.extensions.checkPermissions
 import com.example.weatherlamza.utils.extensions.observeState
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -18,6 +19,9 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
 
     private val weatherViewModel by viewModel<WeatherViewModel>()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val dailyForecastAdapter by lazy {
+        DailyWeatherForecastAdapter()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +39,7 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
     private fun setUI() {
         with(binding) {
             search.setOnQueryTextListener(this@WeatherFragment)
+            forecast.adapter = dailyForecastAdapter
         }
     }
 
@@ -44,6 +49,9 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
                 binding.currentTemperature.text = location.temperature.temperature.toString()
             }
             weatherState.observeState(viewLifecycleOwner, this@WeatherFragment) {}
+            dailyForecast.observe(viewLifecycleOwner) {
+                dailyForecastAdapter.dailyWeatherForecast = it
+            }
         }
     }
 
