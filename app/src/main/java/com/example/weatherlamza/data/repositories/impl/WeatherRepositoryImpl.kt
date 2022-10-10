@@ -1,16 +1,15 @@
 package com.example.weatherlamza.data.repositories.impl
 
+import com.example.weatherlamza.data.local.dao.WeatherForecastDAO
 import com.example.weatherlamza.data.models.Coordinates
 import com.example.weatherlamza.data.models.Location
 import com.example.weatherlamza.data.network.WeatherAPI
 import com.example.weatherlamza.data.repositories.WeatherRepository
+import com.example.weatherlamza.utils.extensions.mappers.toEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 
@@ -23,17 +22,18 @@ import kotlinx.coroutines.withContext
 
 class WeatherRepositoryImpl(
     private val api: WeatherAPI,
+    private val weatherDB: WeatherForecastDAO,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WeatherRepository {
     override fun getWeatherForCoordinates(lat: Double, lon: Double): Flow<Location> = flow {
         emit(api.getWeatherForCoordinates(lat, lon))
-    }.flowOn(coroutineDispatcher)
-
+    }
+        .onEach { location -> weatherDB.insertWeatherForecast(location.toEntity()) }
+        .flowOn(coroutineDispatcher)
 
     override fun getCoordinates(cityName: String): Flow<Coordinates> = flow {
         emit(api.getLocationCoordinatesByName(cityName)[0])
     }.flowOn(coroutineDispatcher)
-
 
     override suspend fun getWeather(cityName: String): Flow<Location> =
         withContext(coroutineDispatcher) {

@@ -13,5 +13,6 @@ data class Location(
     @SerializedName("weather")
     val weather: List<Weather>
 ) {
+
     val currentWeather = this.weather[0]
 }

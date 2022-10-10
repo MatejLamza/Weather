@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     val refreshWeatherInfoRequest =
         PeriodicWorkRequestBuilder<WeatherUpdateWorker>(2, TimeUnit.MINUTES).build()
 
+
     @RequiresApi(Build.VERSION_CODES.O)
     val workManager =
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(refreshWeatherInfoRequest.id)
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
             )
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
+            Log.d("bbb", "onCreate: kreiram notif channel")
         }
 
         setObservers()

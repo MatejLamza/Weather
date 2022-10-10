@@ -29,5 +29,15 @@ class TemperatureConverter {
         return temperatureString?.let { gson.fromJson(it, Weather::class.java) }
     }
 
+    @TypeConverter
+    fun weatherListToJson(value: List<Weather>?): String? {
+        return gson.toJson(value)
+    }
+
+    @TypeConverter
+    fun weatherListFromJson(json: String?): List<Weather>? {
+        return if (json.isNullOrEmpty()) null
+        else gson.fromJson<List<Weather>>(json, Weather::class.java)
+    }
 
 }
