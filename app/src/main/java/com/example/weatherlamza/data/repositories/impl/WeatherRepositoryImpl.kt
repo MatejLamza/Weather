@@ -1,6 +1,8 @@
 package com.example.weatherlamza.data.repositories.impl
 
+import com.example.weatherlamza.data.local.dao.SearchDAO
 import com.example.weatherlamza.data.local.dao.WeatherForecastDAO
+import com.example.weatherlamza.data.local.entity.RecentSearchesEntity
 import com.example.weatherlamza.data.models.Coordinates
 import com.example.weatherlamza.data.models.Forecast
 import com.example.weatherlamza.data.models.Location
@@ -28,8 +30,10 @@ import org.joda.time.LocalDate
 class WeatherRepositoryImpl(
     private val api: WeatherAPI,
     private val weatherDB: WeatherForecastDAO,
+    private val recentSearchesDAO: SearchDAO,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WeatherRepository {
+
     override fun getWeatherForCoordinates(lat: Double, lon: Double): Flow<Location> = flow {
         emit(api.getWeatherForCoordinates(lat, lon))
     }
@@ -43,7 +47,11 @@ class WeatherRepositoryImpl(
     override suspend fun getWeather(cityName: String): Flow<Location> =
         withContext(coroutineDispatcher) {
             val coordinates = getCoordinates(cityName).first()
-            getWeatherForCoordinates(coordinates.lat, coordinates.lon)
+            getWeatherForCoordinates(coordinates.lat, coordinates.lon).onStart {
+                runCatching {
+                    recentSearchesDAO.insertRecentSearchQuery(RecentSearchesEntity(cityName))
+                }
+            }
         }
 
     override fun getForecast(lat: Double, lon: Double): Flow<Forecast> = flow {
@@ -51,6 +59,7 @@ class WeatherRepositoryImpl(
             api.getThreeDayForecast(lat, lon)
         emit(forecast.copy(weatherData = getNextThreeDayForecast(forecast)))
     }.flowOn(coroutineDispatcher)
+
 
     private fun getNextThreeDayForecast(forecast: Forecast): List<WeatherData> {
         val currentDate = forecast.weatherData[0].currentDate
@@ -75,5 +84,4 @@ class WeatherRepositoryImpl(
         //take last three will exclude today's forecast
         return threeDayForecast.takeLast(3)
     }
-
 }

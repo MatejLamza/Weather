@@ -3,8 +3,16 @@ package com.example.weatherlamza.ui.search
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import com.example.weatherlamza.data.models.Location
+import com.example.weatherlamza.data.repositories.SearchRepository
+import com.example.weatherlamza.data.repositories.WeatherRepository
+import com.example.weatherlamza.utils.extensions.launch
 
-class SearchViewModel : ViewModel() {
+class SearchViewModel(
+    private val weatherRepo: WeatherRepository,
+    searchRepo: SearchRepository
+) : ViewModel() {
 
     private val _searchState = MutableLiveData(SearchFragment.State.RECENT)
     val searchState: LiveData<SearchFragment.State> = _searchState
@@ -37,6 +45,19 @@ class SearchViewModel : ViewModel() {
                     _searchState.value = newState
             }
             else -> _searchState.value = newState
+        }
+    }
+
+    private var _weather = MutableLiveData<Location>()
+    val weather: LiveData<Location> = _weather
+
+    val recentlySearchedQueries = searchRepo.getRecentSearches().asLiveData()
+
+    fun getWeatherForQuery(query: String) {
+        launch {
+            weatherRepo.getWeather(query).collect {
+                _weather.value = it
+            }
         }
     }
 }

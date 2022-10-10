@@ -13,4 +13,5 @@ val databaseModule = module {
     }
 
     single { get<WeatherDatabase>().weatherForecastDAO() }
+    single { get<WeatherDatabase>().searchDAO() }
 }

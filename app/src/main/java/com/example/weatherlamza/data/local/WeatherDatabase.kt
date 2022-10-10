@@ -4,12 +4,14 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.weatherlamza.data.local.converters.TemperatureConverter
+import com.example.weatherlamza.data.local.dao.SearchDAO
 import com.example.weatherlamza.data.local.dao.WeatherForecastDAO
 import com.example.weatherlamza.data.local.entity.LocationForecastEntity
+import com.example.weatherlamza.data.local.entity.RecentSearchesEntity
 
 
 @Database(
-    entities = [LocationForecastEntity::class],
+    entities = [LocationForecastEntity::class, RecentSearchesEntity::class],
     version = 1,
     exportSchema = false
 )
@@ -17,4 +19,5 @@ import com.example.weatherlamza.data.local.entity.LocationForecastEntity
 abstract class WeatherDatabase : RoomDatabase() {
 
     abstract fun weatherForecastDAO(): WeatherForecastDAO
+    abstract fun searchDAO(): SearchDAO
 }
