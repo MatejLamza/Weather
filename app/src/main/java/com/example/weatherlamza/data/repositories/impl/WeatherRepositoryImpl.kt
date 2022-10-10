@@ -2,15 +2,20 @@ package com.example.weatherlamza.data.repositories.impl
 
 import com.example.weatherlamza.data.local.dao.WeatherForecastDAO
 import com.example.weatherlamza.data.models.Coordinates
+import com.example.weatherlamza.data.models.Forecast
 import com.example.weatherlamza.data.models.Location
+import com.example.weatherlamza.data.models.WeatherData
 import com.example.weatherlamza.data.network.WeatherAPI
 import com.example.weatherlamza.data.repositories.WeatherRepository
+import com.example.weatherlamza.utils.extensions.currentDate
+import com.example.weatherlamza.utils.extensions.currentDateString
 import com.example.weatherlamza.utils.extensions.mappers.toEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
+import org.joda.time.LocalDate
 
 
 /**
@@ -40,5 +45,35 @@ class WeatherRepositoryImpl(
             val coordinates = getCoordinates(cityName).first()
             getWeatherForCoordinates(coordinates.lat, coordinates.lon)
         }
+
+    override fun getForecast(lat: Double, lon: Double): Flow<Forecast> = flow {
+        val forecast =
+            api.getThreeDayForecast(lat, lon)
+        emit(forecast.copy(weatherData = getNextThreeDayForecast(forecast)))
+    }.flowOn(coroutineDispatcher)
+
+    private fun getNextThreeDayForecast(forecast: Forecast): List<WeatherData> {
+        val currentDate = forecast.weatherData[0].currentDate
+        val targetDate = currentDate.plusDays(3)
+        val threeDayForecast = mutableListOf<WeatherData>()
+
+        val filteredList = forecast.weatherData.filter {
+            LocalDate.parse(it.currentDateString) <= targetDate
+        }
+
+        var dateToday = currentDate
+
+        while (dateToday <= targetDate) {
+            val maxForThisDay = filteredList
+                .filter { it.currentDate == dateToday }
+                .maxBy { it.temperature.tempMax }
+
+            threeDayForecast.add(maxForThisDay)
+            dateToday = dateToday.plusDays(1)
+        }
+
+        //take last three will exclude today's forecast
+        return threeDayForecast.takeLast(3)
+    }
 
 }

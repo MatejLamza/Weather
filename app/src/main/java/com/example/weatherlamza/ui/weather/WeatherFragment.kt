@@ -67,6 +67,7 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
             onSuccess = {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location ->
 
+                    weatherViewModel.getForecastForCurrentLocation(location)
                     weatherViewModel.getWeatherForCurrentLocation(location)
                 }
             },
