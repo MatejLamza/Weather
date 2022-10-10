@@ -1,12 +1,13 @@
 package com.example.weatherlamza.data.repositories.impl
 
-import android.util.Log
 import com.example.weatherlamza.data.local.dao.WeatherForecastDAO
 import com.example.weatherlamza.data.models.Coordinates
 import com.example.weatherlamza.data.models.Forecast
 import com.example.weatherlamza.data.models.Location
+import com.example.weatherlamza.data.models.WeatherData
 import com.example.weatherlamza.data.network.WeatherAPI
 import com.example.weatherlamza.data.repositories.WeatherRepository
+import com.example.weatherlamza.utils.extensions.currentDateString
 import com.example.weatherlamza.utils.extensions.mappers.toEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -45,29 +46,39 @@ class WeatherRepositoryImpl(
         }
 
     override fun getForecast(lat: Double, lon: Double): Flow<Forecast> = flow {
-        val temp = api.getThreeDayForecast(lat, lon)
-        val currentDateStr = temp.weatherData[0].dtText.trim().split(" ")[0]
-        Log.d("bbb", "getForecast: $currentDateStr")
-        var dateNow = LocalDate.parse(currentDateStr)
-        val nextDate = dateNow.plusDays(3)
+        val forecast =
+            api.getThreeDayForecast(lat, lon)
+        emit(forecast.copy(weatherData = getNextThreeDayForecast(forecast)))
+    }.flowOn(coroutineDispatcher)
 
-        val mapped = temp.weatherData.filter {
-            LocalDate.parse(it.dtText.trim().split(" ")[0]) <= nextDate
+    private fun getNextThreeDayForecast(forecast: Forecast): List<WeatherData> {
+        val currentDateStr = forecast.weatherData[0].currentDateString
+
+        val currentDate = LocalDate.parse(currentDateStr)
+
+        val targetDate = currentDate.plusDays(3)
+
+
+        val filteredList = forecast.weatherData.filter {
+            LocalDate.parse(it.currentDateString) <= targetDate
         }
 
-        while (dateNow <= nextDate) {
-            val maxForThisDay = mapped.filter {
-                val currentDate = LocalDate.parse(it.dtText.trim().split(" ")[0])
-                currentDate == dateNow
+        var dateToday = currentDate
+        val threeDayForecast = mutableListOf<WeatherData>()
+
+        while (dateToday <= targetDate) {
+            val maxForThisDay = filteredList.filter {
+                LocalDate.parse(
+                    it.currentDateString
+                ) == dateToday
             }.maxBy { it.temperature.tempMax }
 
-            Log.d("bbb", "Max fro the first day: $maxForThisDay ")
-            dateNow = dateNow.plusDays(1)
+            threeDayForecast.add(maxForThisDay)
+            dateToday = dateToday.plusDays(1)
         }
 
-
-
-        emit(temp)
-    }.flowOn(coroutineDispatcher)
+        //take last three will exclude today's forecast
+        return threeDayForecast.takeLast(3)
+    }
 
 }

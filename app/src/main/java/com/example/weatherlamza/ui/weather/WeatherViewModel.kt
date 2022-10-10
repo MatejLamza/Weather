@@ -37,7 +37,11 @@ class WeatherViewModel(private val weatherRepo: WeatherRepository) : ViewModel()
     fun getForecastForCurrentLocation(location: android.location.Location) {
         launch {
             weatherRepo.getForecast(location.latitude, location.longitude).collect {
-                Log.d("bbb", "Forecast : \n $it ")
+
+                Log.d("bbb", "Forecast size: ${it.weatherData.size}")
+                it.weatherData.forEach {
+                    Log.d("bbb", "Data :$it ")
+                }
             }
         }
     }
