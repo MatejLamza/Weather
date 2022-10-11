@@ -2,6 +2,7 @@ package com.example.weatherlamza.ui.weather
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.example.weatherlamza.common.base.BaseFragment
@@ -28,14 +29,25 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setUI()
         setupObservers()
         setupListeners()
+    }
+
+    private fun setUI() {
+        with(binding) {
+            dailyForecast.adapter = dailyForecastAdapter
+        }
     }
 
     private fun setupObservers() {
         with(weatherViewModel) {
             weather.observe(viewLifecycleOwner) { location ->
                 binding.populateWithLocationData(location, requireContext())
+            }
+            dailyForecast.observe(viewLifecycleOwner) { forecast ->
+                Log.d("bbb", "setupObservers: tu sam forecast")
+                dailyForecastAdapter.dailyWeatherForecast = forecast
             }
             weatherState.observeState(viewLifecycleOwner, this@WeatherFragment) {}
             dailyForecast.observe(viewLifecycleOwner) {
@@ -61,9 +73,7 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
         checkPermissions(permissions,
             onSuccess = {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-
-                    weatherViewModel.getForecastForCurrentLocation(location)
-                    weatherViewModel.getWeatherForCurrentLocation(location)
+                    weatherViewModel.getWeather(location)
                 }
             },
             onError = {

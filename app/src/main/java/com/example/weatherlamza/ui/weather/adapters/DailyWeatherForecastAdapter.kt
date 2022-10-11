@@ -3,6 +3,7 @@ package com.example.weatherlamza.ui.weather.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherlamza.R
 import com.example.weatherlamza.data.models.WeatherData
 import com.example.weatherlamza.databinding.ItemWeatherBinding
 
@@ -40,8 +41,17 @@ class DailyWeatherForecastAdapter :
                 field = value
                 if (value != null) {
                     with(binding) {
-                        weatherDay.text = value.dtText
-                        weatherTemperature.text = value.temperature.temperature.toString()
+                        dayOfTheWeek.text = "Today"
+                        humidity.text = value.temperature.humidity.toInt().toString()
+                        temperatureHigh.text = binding.root.context.getString(
+                            R.string.temperature_low,
+                            value.temperature.tempMax.toInt().toString()
+                        )
+                        temperatureLow.text = binding.root.context.getString(
+                            R.string.temperature_high,
+                            value.temperature.tempMin.toInt().toString()
+                        )
+
                     }
                 }
             }

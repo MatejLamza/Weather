@@ -71,7 +71,6 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.35" />
 
-
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/temperature_high"
             android:layout_width="wrap_content"
@@ -191,6 +190,14 @@
             app:cardCornerRadius="@dimen/card_corner_radius"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/weather_details_container">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/daily_forecast"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_weather" />
 
         </com.google.android.material.card.MaterialCardView>
 

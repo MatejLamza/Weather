@@ -5,9 +5,9 @@ import android.app.NotificationManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.asLiveData
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.weatherlamza.common.state.ConnectivityState
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val NOTIFICATION_CHANNEL_ID = "weather_report"
-        const val WORKER_DATA_ID = "worker_tag"
+        const val WORKER_DATA_TAG = "worker_tag"
     }
 
     private val sessionPrefs by inject<SessionPrefs>(SessionPrefs::class.java)
@@ -34,16 +34,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    val refreshWeatherInfoRequest =
-        PeriodicWorkRequestBuilder<WeatherUpdateWorker>(2, TimeUnit.MINUTES).build()
+    private val refreshWeatherInfoRequest =
+        PeriodicWorkRequestBuilder<WeatherUpdateWorker>(15, TimeUnit.MINUTES).build()
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    val workManager =
-        WorkManager.getInstance(this).getWorkInfoByIdLiveData(refreshWeatherInfoRequest.id)
+    private val workManager = WorkManager.getInstance(this)
 
-
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -63,11 +58,12 @@ class MainActivity : AppCompatActivity() {
         setObservers()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun setObservers() {
-        workManager.observe(this) {}
         sessionPrefs.observePermissionForNotifications().asLiveData().observe(this) { isPermitted ->
             Log.d("bbb", "Are notifications permitted: $isPermitted ")
+            if (!isPermitted) workManager.cancelUniqueWork(WORKER_DATA_TAG)
+            else startUniquePeriodicWork()
+
         }
         connectivityService.networkStatus.asLiveData().observe(this) {
             when (it) {
@@ -75,6 +71,14 @@ class MainActivity : AppCompatActivity() {
                 ConnectivityState.Unavailable -> onNetworkLost()
             }
         }
+    }
+
+    private fun startUniquePeriodicWork() {
+        workManager.enqueueUniquePeriodicWork(
+            WORKER_DATA_TAG,
+            ExistingPeriodicWorkPolicy.KEEP,
+            refreshWeatherInfoRequest
+        )
     }
 
     private fun onNetworkLost() {
