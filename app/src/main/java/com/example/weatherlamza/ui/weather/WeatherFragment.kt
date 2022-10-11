@@ -85,9 +85,6 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
                     else -> false
                 }
             }
-//
-//            settings.setOnClickListener { navigation.navigateToSettings(this@WeatherFragment) }
-//            search.setOnClickListener { navigation.navigateToSearch(this@WeatherFragment) }
         }
     }
 

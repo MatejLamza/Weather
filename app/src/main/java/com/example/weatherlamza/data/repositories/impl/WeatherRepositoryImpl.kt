@@ -1,5 +1,8 @@
 package com.example.weatherlamza.data.repositories.impl
 
+import android.util.Log
+import com.example.weatherlamza.common.exceptions.CityNotFoundException
+import com.example.weatherlamza.common.exceptions.EmptyDatabaseException
 import com.example.weatherlamza.data.local.dao.SearchDAO
 import com.example.weatherlamza.data.local.dao.WeatherForecastDAO
 import com.example.weatherlamza.data.local.entity.RecentSearchesEntity
@@ -11,6 +14,7 @@ import com.example.weatherlamza.data.network.WeatherAPI
 import com.example.weatherlamza.data.repositories.WeatherRepository
 import com.example.weatherlamza.utils.extensions.currentDate
 import com.example.weatherlamza.utils.extensions.currentDateString
+import com.example.weatherlamza.utils.extensions.mappers.toDomain
 import com.example.weatherlamza.utils.extensions.mappers.toEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -38,22 +42,41 @@ class WeatherRepositoryImpl(
         emit(api.getWeatherForCoordinates(lat, lon))
     }
         .onEach { location -> weatherDB.insertWeatherForecast(location.toEntity()) }
+        .catch { e ->
+            Log.e("bbb", "getWeatherForCoordinates: ", e)
+            if (e is IndexOutOfBoundsException) throw CityNotFoundException()
+            else kotlin.runCatching {
+                Log.d("bbb", "getWeatherForCoordinates: tu sam")
+                val test = weatherDB.getWeatherForecast().first().toDomain()
+                Log.d("bbb", "lokacija test: $test ")
+                emit(test)
+            }
+                .onFailure {
+                    Log.d("bbb", "NOPE $it")
+                    throw EmptyDatabaseException()
+                }
+        }
         .flowOn(coroutineDispatcher)
 
     override fun getCoordinates(cityName: String): Flow<Coordinates> = flow {
         emit(api.getLocationCoordinatesByName(cityName)[0])
     }
-        .catch { throw IllegalStateException("City not found") }
+        /* .catch { e ->
+             Log.d("bbb", "getCoordinates: $e")
+             throw IllegalStateException("City not found")
+         }*/
         .flowOn(coroutineDispatcher)
 
     override suspend fun getWeather(cityName: String): Flow<Location> =
         withContext(coroutineDispatcher) {
-            val coordinates = getCoordinates(cityName).first()
-            getWeatherForCoordinates(coordinates.lat, coordinates.lon).onStart {
-                runCatching {
-                    recentSearchesDAO.insertRecentSearchQuery(RecentSearchesEntity(cityName))
+            val coordinates = getCoordinates(cityName).last()
+            getWeatherForCoordinates(coordinates.lat, coordinates.lon)
+                .onStart {
+                    runCatching {
+                        recentSearchesDAO.insertRecentSearchQuery(RecentSearchesEntity(cityName))
+                    }
                 }
-            }
+                .flowOn(coroutineDispatcher)
         }
 
     override fun getForecast(lat: Double, lon: Double): Flow<Forecast> = flow {
@@ -61,7 +84,6 @@ class WeatherRepositoryImpl(
             api.getThreeDayForecast(lat, lon)
         emit(forecast.copy(weatherData = getNextThreeDayForecast(forecast)))
     }.flowOn(coroutineDispatcher)
-
 
     private fun getNextThreeDayForecast(forecast: Forecast): List<WeatherData> {
         val currentDate = forecast.weatherData[0].currentDate

@@ -8,6 +8,16 @@ import java.util.*
 fun Location.toEntity() =
     LocationForecastEntity(
         id = UUID.randomUUID().mostSignificantBits.toString(),
+        name = name,
         temperature = temperature,
-        weather = weather
+        weather = weather,
+        wind = wind
+    )
+
+fun LocationForecastEntity.toDomain() =
+    Location(
+        name = name,
+        temperature = temperature,
+        weather = weather,
+        wind = wind
     )

@@ -3,6 +3,7 @@ package com.example.weatherlamza.data.local.converters
 import androidx.room.TypeConverter
 import com.example.weatherlamza.data.models.Temperature
 import com.example.weatherlamza.data.models.Weather
+import com.example.weatherlamza.data.models.Wind
 import com.google.gson.Gson
 
 class TemperatureConverter {
@@ -20,13 +21,13 @@ class TemperatureConverter {
     }
 
     @TypeConverter
-    fun fromWeather(value: Weather?): String? {
+    fun fromWind(value: Wind?): String? {
         return value?.let { gson.toJson(it) }
     }
 
     @TypeConverter
-    fun toWeather(temperatureString: String?): Weather? {
-        return temperatureString?.let { gson.fromJson(it, Weather::class.java) }
+    fun toWind(windString: String?): Wind? {
+        return windString?.let { gson.fromJson(it, Wind::class.java) }
     }
 
     @TypeConverter

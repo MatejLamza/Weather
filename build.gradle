@@ -11,6 +11,9 @@ buildscript {
 
         retrofit_version = "2.9.0"
 
+        flipper_version = "0.136.0"
+        flipper_soloader = "0.10.1"
+
         shimmer = "0.5.0"
         swipe_refresh = "1.1.0"
         permissions_version = "1.6.1"
