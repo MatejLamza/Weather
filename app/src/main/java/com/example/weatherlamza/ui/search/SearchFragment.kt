@@ -7,6 +7,7 @@ import androidx.lifecycle.distinctUntilChanged
 import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentSearchBinding
 import com.example.weatherlamza.ui.search.adapters.RecentSearchesAdapter
+import com.example.weatherlamza.ui.weather.adapters.DailyWeatherForecastAdapter
 import com.example.weatherlamza.utils.extensions.gone
 import com.example.weatherlamza.utils.extensions.observeState
 import com.example.weatherlamza.utils.extensions.populateWithLocationData
@@ -22,6 +23,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
 
     private val searchViewModel by viewModel<SearchViewModel>()
     private val recentSearchesAdapter by lazy { RecentSearchesAdapter() }
+    private val dailyForecastAdapter by lazy { DailyWeatherForecastAdapter() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,6 +37,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
         with(binding) {
             search.setOnQueryTextListener(this@SearchFragment)
             recentContainer.recentSearchedItems.adapter = recentSearchesAdapter
+            resultContainer.dailyForecast.adapter = dailyForecastAdapter
         }
     }
 
@@ -53,9 +56,11 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
                 binding.resultContainer.populateWithLocationData(it, requireContext())
             }
 
-            searchQueryState.observeState(viewLifecycleOwner, this@SearchFragment) {
-
+            forecast.observe(viewLifecycleOwner) {
+                dailyForecastAdapter.dailyWeatherForecast = it
             }
+
+            searchQueryState.observeState(viewLifecycleOwner, this@SearchFragment) {}
         }
     }
 

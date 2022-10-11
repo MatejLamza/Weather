@@ -6,10 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.example.weatherlamza.common.state.State
 import com.example.weatherlamza.data.models.Location
+import com.example.weatherlamza.data.models.WeatherData
 import com.example.weatherlamza.data.repositories.SearchRepository
 import com.example.weatherlamza.data.repositories.WeatherRepository
 import com.example.weatherlamza.utils.extensions.launch
 import com.example.weatherlamza.utils.extensions.launchWithState
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.last
 
 class SearchViewModel(
     private val weatherRepo: WeatherRepository,
@@ -56,13 +59,21 @@ class SearchViewModel(
     private var _weather = MutableLiveData<Location>()
     val weather: LiveData<Location> = _weather
 
+    private var _forecast = MutableLiveData<List<WeatherData>>()
+    val forecast: LiveData<List<WeatherData>> = _forecast
+
     val recentlySearchedQueries = searchRepo.getRecentSearches().asLiveData()
 
     fun getWeatherForQuery(query: String) {
         launchWithState(_searchQueryState) {
-            weatherRepo.getWeather(query).collect {
-                _weather.value = it
-            }
+            weatherRepo.getWeather(query)
+                .combine(weatherRepo.getCoordinates(query)) { location, coordinates ->
+                    val forecast = weatherRepo.getForecast(coordinates.lat, coordinates.lon).last()
+                    return@combine location to forecast
+                }.collect {
+                    _weather.value = it.first!!
+                    _forecast.value = it.second.weatherData
+                }
         }
     }
 
