@@ -14,7 +14,6 @@ import com.example.weatherlamza.data.network.WeatherAPI
 import com.example.weatherlamza.data.repositories.WeatherRepository
 import com.example.weatherlamza.utils.extensions.currentDate
 import com.example.weatherlamza.utils.extensions.currentDateString
-import com.example.weatherlamza.utils.extensions.mappers.toDomain
 import com.example.weatherlamza.utils.extensions.mappers.toEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -43,18 +42,9 @@ class WeatherRepositoryImpl(
     }
         .onEach { location -> weatherDB.insertWeatherForecast(location.toEntity()) }
         .catch { e ->
-            Log.e("bbb", "getWeatherForCoordinates: ", e)
+            Log.e("bbb", "Error: $e ", e)
             if (e is IndexOutOfBoundsException) throw CityNotFoundException()
-            else kotlin.runCatching {
-                Log.d("bbb", "getWeatherForCoordinates: tu sam")
-                val test = weatherDB.getWeatherForecast().first().toDomain()
-                Log.d("bbb", "lokacija test: $test ")
-                emit(test)
-            }
-                .onFailure {
-                    Log.d("bbb", "NOPE $it")
-                    throw EmptyDatabaseException()
-                }
+            else throw EmptyDatabaseException()
         }
         .flowOn(coroutineDispatcher)
 

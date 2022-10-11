@@ -2,12 +2,8 @@ package com.example.weatherlamza.ui.weather
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
 import android.widget.Toast
-import com.example.weatherlamza.R
 import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentWeatherBinding
 import com.example.weatherlamza.ui.weather.adapters.DailyWeatherForecastAdapter
@@ -40,13 +36,7 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
     private fun setUI() {
         with(binding) {
             dailyForecast.adapter = dailyForecastAdapter
-            setupToolbar(binding.myToolbar)
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        R.menu.main_menu.let { inflater.inflate(it, menu) }
-        super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun setupObservers() {
@@ -55,7 +45,6 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
                 binding.populateWithLocationData(location, requireContext())
             }
             dailyForecast.observe(viewLifecycleOwner) { forecast ->
-                Log.d("bbb", "setupObservers: tu sam forecast")
                 dailyForecastAdapter.dailyWeatherForecast = forecast
             }
             weatherState.observeState(viewLifecycleOwner, this@WeatherFragment) {}
@@ -70,20 +59,6 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
             weatherContent.setOnRefreshListener {
                 requestLastLocation()
                 binding.weatherContent.isRefreshing = false
-            }
-
-            myToolbar.setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.search_menu_item -> {
-                        navigation.navigateToSearch(this@WeatherFragment)
-                        true
-                    }
-                    R.id.settings_menu_item -> {
-                        navigation.navigateToSettings(this@WeatherFragment)
-                        true
-                    }
-                    else -> false
-                }
             }
         }
     }

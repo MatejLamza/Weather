@@ -1,7 +1,6 @@
 package com.example.weatherlamza.ui.search
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -39,7 +38,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
 
     private fun setUI() {
         with(binding) {
-            setupToolbar(binding.myToolbar, isBackEnabled = true)
             search.setOnQueryTextListener(this@SearchFragment)
             recentContainer.recentSearchedItems.adapter = recentSearchesAdapter
         }
@@ -76,14 +74,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
             search.setOnCloseListener {
                 onStateChanged(State.RECENT)
                 true
-            }
-
-            myToolbar.setOnMenuItemClickListener {
-                Log.d("bbb", "setListeners: $it")
-                when (it.itemId) {
-                    android.R.id.home -> findNavController().popBackStack()
-                    else -> false
-                }
             }
         }
     }

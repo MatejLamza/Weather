@@ -5,6 +5,9 @@ import com.example.weatherlamza.data.models.Temperature
 import com.example.weatherlamza.data.models.Weather
 import com.example.weatherlamza.data.models.Wind
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Type
+
 
 class TemperatureConverter {
 
@@ -38,7 +41,10 @@ class TemperatureConverter {
     @TypeConverter
     fun weatherListFromJson(json: String?): List<Weather>? {
         return if (json.isNullOrEmpty()) null
-        else gson.fromJson<List<Weather>>(json, Weather::class.java)
+        else {
+            val listType: Type = object : TypeToken<List<Weather?>?>() {}.type
+            return Gson().fromJson(json, listType)
+        }
     }
 
 }

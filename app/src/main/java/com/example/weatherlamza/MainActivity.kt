@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.asLiveData
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -14,6 +16,7 @@ import com.example.weatherlamza.common.state.ConnectivityState
 import com.example.weatherlamza.data.local.SessionPrefs
 import com.example.weatherlamza.databinding.ActivityMainBinding
 import com.example.weatherlamza.utils.extensions.errorSnackBar
+import com.example.weatherlamza.utils.extensions.getNavController
 import com.example.weatherlamza.utils.extensions.infoSnackBar
 import com.example.weatherlamza.utils.services.InternetConnectivityService
 import com.example.weatherlamza.utils.workers.WeatherUpdateWorker
@@ -31,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private val sessionPrefs by inject<SessionPrefs>(SessionPrefs::class.java)
     private val connectivityService by lazy { InternetConnectivityService(this) }
     private lateinit var binding: ActivityMainBinding
+    private val navController: NavController by lazy { getNavController(R.id.mainContainer) }
 
 
     private val refreshWeatherInfoRequest =
@@ -53,8 +57,25 @@ class MainActivity : AppCompatActivity() {
             notificationManager.createNotificationChannel(channel)
         }
 
+        setUI()
         setObservers()
     }
+
+    private fun setUI() {
+        binding.navigationBar.setOnItemSelectedListener {
+            val currentItemId = navController?.currentDestination?.id
+
+            if (currentItemId != it.itemId) {
+                navController.navigate(
+                    it.itemId, null,
+                    NavOptions.Builder().setPopUpTo(it.itemId, true)
+                        .build()
+                )
+            }
+            return@setOnItemSelectedListener true
+        }
+    }
+
 
     private fun setObservers() {
         sessionPrefs.observePermissionForNotifications().asLiveData().observe(this) { isPermitted ->

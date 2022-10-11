@@ -7,7 +7,7 @@ import com.example.weatherlamza.databinding.FragmentWeatherBinding
 
 
 fun FragmentWeatherBinding.populateWithLocationData(currentLocation: Location, context: Context) {
-    toolbarTitle.text = currentLocation.name
+    location.text = currentLocation.name
     currentTemperature.text = currentLocation.temperature.temperature.toInt().toString()
     description.text = currentLocation.weather.first().description.uppercase()
 

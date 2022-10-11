@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.example.weatherlamza.navigation.NavigationViewModel
@@ -38,20 +36,6 @@ open class BaseFragment<VB : ViewBinding>(
     ): android.view.View? {
         _binding = inflate.invoke(inflater, container, false)
         return binding.root
-    }
-
-    fun setupToolbar(
-        toolbar: Toolbar,
-        title: String? = null,
-        isBackEnabled: Boolean = false
-    ) {
-        setHasOptionsMenu(true)
-        with(requireActivity() as AppCompatActivity) {
-            setSupportActionBar(toolbar)
-            supportActionBar?.title = ""
-            supportActionBar?.setDisplayShowHomeEnabled(isBackEnabled)
-            supportActionBar?.setDisplayHomeAsUpEnabled(isBackEnabled)
-        }
     }
 
     override fun dismissLoading() {

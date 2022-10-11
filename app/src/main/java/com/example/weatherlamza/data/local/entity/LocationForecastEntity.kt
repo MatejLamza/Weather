@@ -9,8 +9,8 @@ import com.example.weatherlamza.data.models.Wind
 
 @Entity(tableName = "location_forecast")
 data class LocationForecastEntity(
-    @PrimaryKey
-    val id: String,
+    @PrimaryKey(autoGenerate = false)
+    val id: Long = 0L,
     val name: String,
     val temperature: Temperature,
     val weather: List<Weather>,

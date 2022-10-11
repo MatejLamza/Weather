@@ -35,7 +35,7 @@ class FlipperInitializer(private val application: Application) {
                 for (databaseName in application.databaseList()) {
                     databaseFiles.add(application.getDatabasePath(databaseName));
                 }
-                databaseFiles.add(application.getDatabasePath("dogma-db"))
+                databaseFiles.add(application.getDatabasePath("weather-db"))
                 databaseFiles;
             }
 
