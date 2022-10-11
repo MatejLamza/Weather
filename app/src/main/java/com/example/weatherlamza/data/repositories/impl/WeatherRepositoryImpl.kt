@@ -1,8 +1,5 @@
 package com.example.weatherlamza.data.repositories.impl
 
-import android.util.Log
-import com.example.weatherlamza.common.exceptions.CityNotFoundException
-import com.example.weatherlamza.common.exceptions.EmptyDatabaseException
 import com.example.weatherlamza.data.local.dao.SearchDAO
 import com.example.weatherlamza.data.local.dao.WeatherForecastDAO
 import com.example.weatherlamza.data.local.entity.RecentSearchesEntity
@@ -14,12 +11,11 @@ import com.example.weatherlamza.data.network.WeatherAPI
 import com.example.weatherlamza.data.repositories.WeatherRepository
 import com.example.weatherlamza.utils.extensions.currentDate
 import com.example.weatherlamza.utils.extensions.currentDateString
+import com.example.weatherlamza.utils.extensions.mappers.toDomain
 import com.example.weatherlamza.utils.extensions.mappers.toEntity
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.withContext
 import org.joda.time.LocalDate
 
 
@@ -37,14 +33,17 @@ class WeatherRepositoryImpl(
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WeatherRepository {
 
+
     override fun getWeatherForCoordinates(lat: Double, lon: Double): Flow<Location> = flow {
         emit(api.getWeatherForCoordinates(lat, lon))
     }
         .onEach { location -> weatherDB.insertWeatherForecast(location.toEntity()) }
-        .catch { e ->
-            Log.e("bbb", "Error: $e ", e)
-            if (e is IndexOutOfBoundsException) throw CityNotFoundException()
-            else throw EmptyDatabaseException()
+        .catch {
+            withContext(coroutineDispatcher) {
+                emit(
+                    weatherDB.getWeatherForecast().toDomain()
+                )
+            }
         }
         .flowOn(coroutineDispatcher)
 
@@ -64,6 +63,13 @@ class WeatherRepositoryImpl(
                 .onStart {
                     runCatching {
                         recentSearchesDAO.insertRecentSearchQuery(RecentSearchesEntity(cityName))
+                    }
+                }
+                .catch {
+                    withContext(coroutineDispatcher) {
+                        emit(
+                            weatherDB.getWeatherForecast().toDomain()
+                        )
                     }
                 }
                 .flowOn(coroutineDispatcher)

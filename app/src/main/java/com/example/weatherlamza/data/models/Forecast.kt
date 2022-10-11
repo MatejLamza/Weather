@@ -8,7 +8,4 @@ data class Forecast(
 
     @SerializedName("list")
     val weatherData: List<WeatherData>,
-) {
-
-
-}
+)

@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.weatherlamza.data.local.entity.LocationForecastEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WeatherForecastDAO {
@@ -15,5 +14,5 @@ interface WeatherForecastDAO {
 
 
     @Query("SELECT * FROM location_forecast")
-    fun getWeatherForecast(): Flow<LocationForecastEntity>
+    fun getWeatherForecast(): LocationForecastEntity
 }
