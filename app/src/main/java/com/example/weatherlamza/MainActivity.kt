@@ -14,6 +14,7 @@ import com.example.weatherlamza.common.state.ConnectivityState
 import com.example.weatherlamza.data.local.SessionPrefs
 import com.example.weatherlamza.databinding.ActivityMainBinding
 import com.example.weatherlamza.utils.extensions.errorSnackBar
+import com.example.weatherlamza.utils.extensions.hideToolbar
 import com.example.weatherlamza.utils.extensions.infoSnackBar
 import com.example.weatherlamza.utils.services.InternetConnectivityService
 import com.example.weatherlamza.utils.workers.WeatherUpdateWorker
@@ -47,10 +48,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        if (supportActionBar != null) {
-            supportActionBar!!.hide()
-        }
+        hideToolbar()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -60,7 +58,6 @@ class MainActivity : AppCompatActivity() {
             )
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
-            Log.d("bbb", "onCreate: kreiram notif channel")
         }
 
         setObservers()
@@ -87,7 +84,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onNetworkAvailable() {
-        kotlin.runCatching {
+        runCatching {
             infoSnackBar(binding.root, getString(R.string.connection_available)).show()
         }
     }
