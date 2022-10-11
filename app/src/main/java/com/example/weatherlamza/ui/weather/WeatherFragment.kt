@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import com.example.weatherlamza.R
 import com.example.weatherlamza.common.base.BaseFragment
+import com.example.weatherlamza.data.models.Location
 import com.example.weatherlamza.databinding.FragmentWeatherBinding
 import com.example.weatherlamza.ui.weather.adapters.DailyWeatherForecastAdapter
 import com.example.weatherlamza.utils.extensions.checkPermissions
@@ -37,19 +39,49 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
     private fun setUI() {
         with(binding) {
 
-            forecast.adapter = dailyForecastAdapter
+//            forecast.adapter = dailyForecastAdapter
         }
     }
 
     private fun setupObservers() {
         with(weatherViewModel) {
             weather.observe(viewLifecycleOwner) { location ->
-                binding.currentTemperature.text = location.temperature.temperature.toString()
+                setLocation(location)
             }
             weatherState.observeState(viewLifecycleOwner, this@WeatherFragment) {}
             dailyForecast.observe(viewLifecycleOwner) {
                 dailyForecastAdapter.dailyWeatherForecast = it
             }
+        }
+    }
+
+    private fun setLocation(currentLocation: Location) {
+        with(binding) {
+            location.text = currentLocation.name
+            currentTemperature.text = currentLocation.temperature.temperature.toInt().toString()
+            description.text = currentLocation.weather.first().description.uppercase()
+
+            temperatureHigh.text = getString(
+                R.string.temperature_high,
+                currentLocation.temperature.tempMax.toInt().toString()
+            )
+            temperatureLow.text = getString(
+                R.string.temperature_low,
+                currentLocation.temperature.tempMin.toInt().toString()
+            )
+
+            humidity.text = getString(
+                R.string.humidity,
+                currentLocation.temperature.humidity.toInt().toString()
+            )
+            pressure.text = getString(
+                R.string.pressure,
+                currentLocation.temperature.pressure.toInt().toString()
+            )
+            wind.text = getString(
+                R.string.wind,
+                currentLocation.wind.speed.toInt().toString()
+            )
         }
     }
 

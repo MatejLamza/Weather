@@ -7,11 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
 import androidx.lifecycle.asLiveData
-import androidx.navigation.Navigation
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.weatherlamza.common.state.ConnectivityState
@@ -21,7 +17,6 @@ import com.example.weatherlamza.utils.extensions.errorSnackBar
 import com.example.weatherlamza.utils.extensions.infoSnackBar
 import com.example.weatherlamza.utils.services.InternetConnectivityService
 import com.example.weatherlamza.utils.workers.WeatherUpdateWorker
-import com.google.android.material.navigation.NavigationView
 import org.koin.java.KoinJavaComponent.inject
 import java.util.concurrent.TimeUnit
 
@@ -46,33 +41,16 @@ class MainActivity : AppCompatActivity() {
     val workManager =
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(refreshWeatherInfoRequest.id)
 
-    private val navController by lazy {
-        Navigation.findNavController(this, R.id.nav_host_fragment)
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-
-        return NavigationUI.navigateUp(navController, binding.drawerLayout)
-    }
-
-    private fun setupDrawerLayout() {
-        findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
-        NavigationUI.setupActionBarWithNavController(this, navController, binding.drawerLayout)
-    }
-
-    override fun onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (supportActionBar != null) {
+            supportActionBar!!.hide()
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -85,7 +63,6 @@ class MainActivity : AppCompatActivity() {
             Log.d("bbb", "onCreate: kreiram notif channel")
         }
 
-        setupDrawerLayout()
         setObservers()
     }
 
