@@ -14,7 +14,6 @@ import com.example.weatherlamza.common.state.ConnectivityState
 import com.example.weatherlamza.data.local.SessionPrefs
 import com.example.weatherlamza.databinding.ActivityMainBinding
 import com.example.weatherlamza.utils.extensions.errorSnackBar
-import com.example.weatherlamza.utils.extensions.hideToolbar
 import com.example.weatherlamza.utils.extensions.infoSnackBar
 import com.example.weatherlamza.utils.services.InternetConnectivityService
 import com.example.weatherlamza.utils.workers.WeatherUpdateWorker
@@ -43,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        hideToolbar()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(

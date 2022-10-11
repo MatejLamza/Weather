@@ -3,8 +3,13 @@ package com.example.weatherlamza.ui.weather
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import com.example.weatherlamza.R
 import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentWeatherBinding
 import com.example.weatherlamza.ui.weather.adapters.DailyWeatherForecastAdapter
@@ -37,7 +42,28 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
     private fun setUI() {
         with(binding) {
             dailyForecast.adapter = dailyForecastAdapter
+            setupToolbar(binding.myToolbar)
         }
+    }
+
+
+    fun setupToolbar(
+        toolbar: Toolbar,
+        title: String? = null,
+        isBackEnabled: Boolean = false
+    ) {
+        setHasOptionsMenu(true)
+        with(requireActivity() as AppCompatActivity) {
+            setSupportActionBar(toolbar)
+            supportActionBar?.title = ""
+            supportActionBar?.setDisplayShowHomeEnabled(isBackEnabled)
+            supportActionBar?.setDisplayHomeAsUpEnabled(isBackEnabled)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        R.menu.main_menu.let { inflater.inflate(it, menu) }
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun setupObservers() {
@@ -63,8 +89,22 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
                 binding.weatherContent.isRefreshing = false
             }
 
-            settings.setOnClickListener { navigation.navigateToSettings(this@WeatherFragment) }
-            search.setOnClickListener { navigation.navigateToSearch(this@WeatherFragment) }
+            myToolbar.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.search_menu_item -> {
+                        navigation.navigateToSearch(this@WeatherFragment)
+                        true
+                    }
+                    R.id.settings_menu_item -> {
+                        navigation.navigateToSettings(this@WeatherFragment)
+                        true
+                    }
+                    else -> false
+                }
+            }
+//
+//            settings.setOnClickListener { navigation.navigateToSettings(this@WeatherFragment) }
+//            search.setOnClickListener { navigation.navigateToSearch(this@WeatherFragment) }
         }
     }
 
