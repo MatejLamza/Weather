@@ -1,9 +1,15 @@
 package com.example.weatherlamza.ui.search
 
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.distinctUntilChanged
+import androidx.navigation.fragment.findNavController
+import com.example.weatherlamza.R
 import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentSearchBinding
 import com.example.weatherlamza.ui.search.adapters.RecentSearchesAdapter
@@ -33,6 +39,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
 
     private fun setUI() {
         with(binding) {
+            setupToolbar(binding.myToolbar, isBackEnabled = true)
             search.setOnQueryTextListener(this@SearchFragment)
             recentContainer.recentSearchedItems.adapter = recentSearchesAdapter
         }
@@ -59,11 +66,31 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        R.menu.main_menu.let { inflater.inflate(it, menu) }
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
     private fun setListeners() {
-        binding.search.setOnCloseListener {
-            onStateChanged(State.RECENT)
-            true
+        with(binding) {
+            search.setOnCloseListener {
+                onStateChanged(State.RECENT)
+                true
+            }
+
+            myToolbar.setOnMenuItemClickListener {
+                Log.d("bbb", "setListeners: $it")
+                when (it.itemId) {
+                    android.R.id.home -> findNavController().popBackStack()
+                    else -> false
+                }
+            }
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) findNavController().popBackStack()
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {

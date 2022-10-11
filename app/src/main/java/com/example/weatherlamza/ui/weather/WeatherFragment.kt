@@ -7,8 +7,6 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import com.example.weatherlamza.R
 import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentWeatherBinding
@@ -43,21 +41,6 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
         with(binding) {
             dailyForecast.adapter = dailyForecastAdapter
             setupToolbar(binding.myToolbar)
-        }
-    }
-
-
-    fun setupToolbar(
-        toolbar: Toolbar,
-        title: String? = null,
-        isBackEnabled: Boolean = false
-    ) {
-        setHasOptionsMenu(true)
-        with(requireActivity() as AppCompatActivity) {
-            setSupportActionBar(toolbar)
-            supportActionBar?.title = ""
-            supportActionBar?.setDisplayShowHomeEnabled(isBackEnabled)
-            supportActionBar?.setDisplayHomeAsUpEnabled(isBackEnabled)
         }
     }
 
