@@ -42,6 +42,8 @@ class WeatherRepositoryImpl(
 
     override fun getCoordinates(cityName: String): Flow<Coordinates> = flow {
         emit(api.getLocationCoordinatesByName(cityName)[0])
+    }.catch {
+        throw IllegalStateException("City not found")
     }.flowOn(coroutineDispatcher)
 
     override suspend fun getWeather(cityName: String): Flow<Location> =

@@ -4,10 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import com.example.weatherlamza.common.state.State
 import com.example.weatherlamza.data.models.Location
 import com.example.weatherlamza.data.repositories.SearchRepository
 import com.example.weatherlamza.data.repositories.WeatherRepository
-import com.example.weatherlamza.utils.extensions.launch
+import com.example.weatherlamza.utils.extensions.launchWithState
 
 class SearchViewModel(
     private val weatherRepo: WeatherRepository,
@@ -16,6 +17,9 @@ class SearchViewModel(
 
     private val _searchState = MutableLiveData(SearchFragment.State.RECENT)
     val searchState: LiveData<SearchFragment.State> = _searchState
+
+    private val _searchQueryState = MutableLiveData<State>()
+    val searchQueryState: LiveData<State> = _searchQueryState
 
     val searchQuery = MutableLiveData<String>()
 
@@ -54,7 +58,7 @@ class SearchViewModel(
     val recentlySearchedQueries = searchRepo.getRecentSearches().asLiveData()
 
     fun getWeatherForQuery(query: String) {
-        launch {
+        launchWithState(_searchQueryState) {
             weatherRepo.getWeather(query).collect {
                 _weather.value = it
             }

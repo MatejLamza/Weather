@@ -8,6 +8,7 @@ import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentSearchBinding
 import com.example.weatherlamza.ui.search.adapters.RecentSearchesAdapter
 import com.example.weatherlamza.utils.extensions.gone
+import com.example.weatherlamza.utils.extensions.observeState
 import com.example.weatherlamza.utils.extensions.populateWithLocationData
 import com.example.weatherlamza.utils.extensions.visible
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -50,6 +51,10 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
 
             weather.observe(viewLifecycleOwner) {
                 binding.resultContainer.populateWithLocationData(it, requireContext())
+            }
+
+            searchQueryState.observeState(viewLifecycleOwner, this@SearchFragment) {
+
             }
         }
     }
