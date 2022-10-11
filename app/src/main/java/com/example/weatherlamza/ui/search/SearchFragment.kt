@@ -1,14 +1,9 @@
 package com.example.weatherlamza.ui.search
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.distinctUntilChanged
-import androidx.navigation.fragment.findNavController
-import com.example.weatherlamza.R
 import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentSearchBinding
 import com.example.weatherlamza.ui.search.adapters.RecentSearchesAdapter
@@ -64,23 +59,20 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        R.menu.main_menu.let { inflater.inflate(it, menu) }
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
     private fun setListeners() {
         with(binding) {
             search.setOnCloseListener {
                 onStateChanged(State.RECENT)
                 true
             }
-        }
-    }
+            recentSearchesAdapter.onQuerySelected = { query ->
+                binding.search.setQuery(query, true)
+            }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) findNavController().popBackStack()
-        return super.onOptionsItemSelected(item)
+            recentSearchesAdapter.onQueryRemoved = { query ->
+                searchViewModel.removeQuery(query)
+            }
+        }
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {

@@ -11,6 +11,9 @@ class RecentSearchesAdapter :
     private var _binding: ItemRecentlySearchedBinding? = null
     private val binding: ItemRecentlySearchedBinding get() = _binding!!
 
+    var onQuerySelected: ((query: String) -> Unit)? = null
+    var onQueryRemoved: ((query: String) -> Unit)? = null
+
     var recentlySearchedQueries = emptyList<String>()
         set(value) {
             field = value
@@ -39,5 +42,14 @@ class RecentSearchesAdapter :
                     binding.searchedItem.text = value
                 }
             }
+
+        init {
+            binding.clear.setOnClickListener {
+                onQueryRemoved?.invoke(recentlySearchedQueries[layoutPosition])
+            }
+            binding.root.setOnClickListener {
+                onQuerySelected?.invoke(recentlySearchedQueries[layoutPosition])
+            }
+        }
     }
 }

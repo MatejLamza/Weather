@@ -8,11 +8,12 @@ import com.example.weatherlamza.common.state.State
 import com.example.weatherlamza.data.models.Location
 import com.example.weatherlamza.data.repositories.SearchRepository
 import com.example.weatherlamza.data.repositories.WeatherRepository
+import com.example.weatherlamza.utils.extensions.launch
 import com.example.weatherlamza.utils.extensions.launchWithState
 
 class SearchViewModel(
     private val weatherRepo: WeatherRepository,
-    searchRepo: SearchRepository
+    private val searchRepo: SearchRepository
 ) : ViewModel() {
 
     private val _searchState = MutableLiveData(SearchFragment.State.RECENT)
@@ -62,6 +63,12 @@ class SearchViewModel(
             weatherRepo.getWeather(query).collect {
                 _weather.value = it
             }
+        }
+    }
+
+    fun removeQuery(query: String) {
+        launch {
+            searchRepo.removeQuery(query)
         }
     }
 }

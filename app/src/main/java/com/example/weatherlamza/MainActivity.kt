@@ -63,8 +63,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUI() {
         binding.navigationBar.setOnItemSelectedListener {
-            val currentItemId = navController?.currentDestination?.id
-
+            val currentItemId = navController.currentDestination?.id
             if (currentItemId != it.itemId) {
                 navController.navigate(
                     it.itemId, null,
