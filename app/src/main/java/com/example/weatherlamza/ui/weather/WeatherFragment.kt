@@ -32,6 +32,7 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
         setUI()
         setupObservers()
         setupListeners()
+        requestLastLocation()
     }
 
     private fun setUI() {
