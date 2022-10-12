@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#00FFFFFF"
+    android:padding="@dimen/margin_default"
+    tools:background="@color/black">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/day_of_the_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Today" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_constraint_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/humidity_icon"
+        android:layout_width="@dimen/icon_small"
+        android:layout_height="@dimen/icon_small"
+        android:src="@drawable/ic_humidity"
+        app:layout_constraintBottom_toBottomOf="@id/day_of_the_week"
+        app:layout_constraintStart_toStartOf="@id/horizontal_constraint_start"
+        app:layout_constraintTop_toTopOf="@id/day_of_the_week" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/humidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/humidity_icon"
+        app:layout_constraintStart_toEndOf="@id/humidity_icon"
+        app:layout_constraintTop_toTopOf="@id/humidity_icon"
+        tools:text="5%" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/icon_daily"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:src="@drawable/ic_clear_sky"
+        app:layout_constraintBottom_toBottomOf="@id/day_of_the_week"
+        app:layout_constraintStart_toEndOf="@id/humidity"
+        app:layout_constraintTop_toTopOf="@id/day_of_the_week" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/icon_night"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_default"
+        android:src="@drawable/ic_clear_night"
+        app:layout_constraintBottom_toBottomOf="@id/day_of_the_week"
+        app:layout_constraintStart_toEndOf="@id/icon_daily"
+        app:layout_constraintTop_toTopOf="@id/day_of_the_week" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/temperature_high"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_default"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/day_of_the_week"
+        app:layout_constraintStart_toEndOf="@id/icon_night"
+        app:layout_constraintTop_toTopOf="@id/day_of_the_week"
+        tools:text="20" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/temperature_low"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/day_of_the_week"
+        app:layout_constraintStart_toEndOf="@id/temperature_high"
+        app:layout_constraintTop_toTopOf="@id/day_of_the_week"
+        tools:text="22" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

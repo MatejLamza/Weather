@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="highlight_red">#E41809</color>
     <color name="highlight_purple">#31247A</color>
+    <color name="transparent">#00FFFFFF</color>
 </resources>

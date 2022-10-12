@@ -1,48 +1,50 @@
 package com.example.weatherlamza
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import androidx.annotation.RequiresApi
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.asLiveData
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
+import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.common.state.ConnectivityState
-import com.example.weatherlamza.data.local.SessionPrefs
-import com.example.weatherlamza.utils.extensions.errorSnackBar
-import com.example.weatherlamza.utils.extensions.infoSnackBar
+import com.example.weatherlamza.databinding.ActivityMainBinding
+import com.example.weatherlamza.utils.WeatherUpdateWorkerProvider
+import com.example.weatherlamza.utils.extensions.*
 import com.example.weatherlamza.utils.services.InternetConnectivityService
-import com.example.weatherlamza.utils.workers.WeatherUpdateWorker
-import org.koin.java.KoinJavaComponent.inject
-import java.util.concurrent.TimeUnit
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.flow.distinctUntilChanged
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
         const val NOTIFICATION_CHANNEL_ID = "weather_report"
-        const val WORKER_DATA_ID = "worker_tag"
+        const val WORKER_DATA_TAG = "worker_tag"
+        const val WORKER_DATA_KEY = "location"
     }
 
-    private val sessionPrefs by inject<SessionPrefs>(SessionPrefs::class.java)
     private val connectivityService by lazy { InternetConnectivityService(this) }
+    private val navController: NavController by lazy { getNavController(R.id.mainContainer) }
+    private val mainViewModel by viewModel<MainViewModel>()
+    private val weatherUpdateWorkerProvider by lazy {
+        WeatherUpdateWorkerProvider(this)
+    }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    val refreshWeatherInfoRequest =
-        PeriodicWorkRequestBuilder<WeatherUpdateWorker>(2, TimeUnit.MINUTES).build()
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    val workManager =
-        WorkManager.getInstance(this).getWorkInfoByIdLiveData(refreshWeatherInfoRequest.id)
-
-
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -52,38 +54,67 @@ class MainActivity : AppCompatActivity() {
             )
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
-            Log.d("bbb", "onCreate: kreiram notif channel")
         }
-
+        requestLastLocation()
+        setUI()
         setObservers()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun setObservers() {
-        workManager.observe(this) {}
-        sessionPrefs.observePermissionForNotifications().asLiveData().observe(this) { isPermitted ->
-            Log.d("bbb", "Are notifications permitted: $isPermitted ")
+    @SuppressLint("MissingPermission")
+    private fun requestLastLocation() {
+        checkPermissions(
+            BaseFragment.permissions,
+            onSuccess = {
+                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                    mainViewModel.currentLocation.value = location
+                }
+            },
+            onError = {
+                Toast.makeText(
+                    this,
+                    "Please enable permissions to get forecast for current location",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            })
+    }
+
+    private fun setUI() {
+        binding.navigationBar.setOnItemSelectedListener {
+            val currentItemId = navController.currentDestination?.id
+            if (currentItemId != it.itemId) {
+                navController.navigate(
+                    it.itemId, null,
+                    NavOptions.Builder().setPopUpTo(it.itemId, true)
+                        .build()
+                )
+            }
+            return@setOnItemSelectedListener true
         }
-        connectivityService.networkStatus.asLiveData().observe(this) {
+    }
+
+    private fun setObservers() {
+        connectivityService.networkStatus.distinctUntilChanged().asLiveData().observe(this) {
             when (it) {
                 ConnectivityState.Available -> onNetworkAvailable()
                 ConnectivityState.Unavailable -> onNetworkLost()
             }
         }
+        mainViewModel.locationWithPermission.observe(this) {
+            if (!it.areNotificationsEnabled) weatherUpdateWorkerProvider.cancelUniquePeriodicWork()
+            else weatherUpdateWorkerProvider.startUniquePeriodicWork(it.currentLocation)
+        }
     }
 
     private fun onNetworkLost() {
         runCatching {
-            errorSnackBar(findViewById(R.id.container), getString(R.string.connection_lost)).show()
+            errorSnackBar(binding.root, getString(R.string.connection_lost)).show()
         }
     }
 
     private fun onNetworkAvailable() {
-        kotlin.runCatching {
-            infoSnackBar(
-                findViewById(R.id.container),
-                getString(R.string.connection_available)
-            ).show()
+        runCatching {
+            infoSnackBar(binding.root, getString(R.string.connection_available)).show()
         }
     }
 }

@@ -17,12 +17,13 @@ interface WeatherAPI {
 
     @GET("/geo/1.0/direct")
     suspend fun getLocationCoordinatesByName(
-        @Query("q") city: String
+        @Query("q") city: String,
     ): List<Coordinates>
 
     @GET("/data/2.5/forecast")
     suspend fun getThreeDayForecast(
         @Query("lat") lat: Double,
-        @Query("lon") lon: Double
+        @Query("lon") lon: Double,
+        @Query("units") units: String = "metric"
     ): Forecast
 }

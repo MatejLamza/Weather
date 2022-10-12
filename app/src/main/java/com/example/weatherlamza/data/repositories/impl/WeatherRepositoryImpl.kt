@@ -1,6 +1,8 @@
 package com.example.weatherlamza.data.repositories.impl
 
+import com.example.weatherlamza.data.local.dao.SearchDAO
 import com.example.weatherlamza.data.local.dao.WeatherForecastDAO
+import com.example.weatherlamza.data.local.entity.RecentSearchesEntity
 import com.example.weatherlamza.data.models.Coordinates
 import com.example.weatherlamza.data.models.Forecast
 import com.example.weatherlamza.data.models.Location
@@ -9,12 +11,11 @@ import com.example.weatherlamza.data.network.WeatherAPI
 import com.example.weatherlamza.data.repositories.WeatherRepository
 import com.example.weatherlamza.utils.extensions.currentDate
 import com.example.weatherlamza.utils.extensions.currentDateString
+import com.example.weatherlamza.utils.extensions.mappers.toDomain
 import com.example.weatherlamza.utils.extensions.mappers.toEntity
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.withContext
 import org.joda.time.LocalDate
 
 
@@ -28,29 +29,52 @@ import org.joda.time.LocalDate
 class WeatherRepositoryImpl(
     private val api: WeatherAPI,
     private val weatherDB: WeatherForecastDAO,
+    private val recentSearchesDAO: SearchDAO,
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WeatherRepository {
+
+
     override fun getWeatherForCoordinates(lat: Double, lon: Double): Flow<Location> = flow {
         emit(api.getWeatherForCoordinates(lat, lon))
     }
         .onEach { location -> weatherDB.insertWeatherForecast(location.toEntity()) }
+        .catch {
+            withContext(coroutineDispatcher) {
+                emit(weatherDB.getWeatherForecast().toDomain())
+            }
+        }
         .flowOn(coroutineDispatcher)
 
     override fun getCoordinates(cityName: String): Flow<Coordinates> = flow {
         emit(api.getLocationCoordinatesByName(cityName)[0])
-    }.flowOn(coroutineDispatcher)
+    }
+        .flowOn(coroutineDispatcher)
 
     override suspend fun getWeather(cityName: String): Flow<Location> =
         withContext(coroutineDispatcher) {
-            val coordinates = getCoordinates(cityName).first()
+            val coordinates = getCoordinates(cityName).last()
             getWeatherForCoordinates(coordinates.lat, coordinates.lon)
+                .onEach { recentSearchesDAO.insertRecentSearchQuery(RecentSearchesEntity(cityName)) }
+                .catch {
+                    withContext(coroutineDispatcher) {
+                        emit(weatherDB.getWeatherForecast().toDomain())
+                    }
+                }
+                .flowOn(coroutineDispatcher)
         }
 
     override fun getForecast(lat: Double, lon: Double): Flow<Forecast> = flow {
         val forecast =
             api.getThreeDayForecast(lat, lon)
         emit(forecast.copy(weatherData = getNextThreeDayForecast(forecast)))
-    }.flowOn(coroutineDispatcher)
+    }
+        .onEach { weatherDB.insertDailyForecast(it.toEntity()) }
+        .catch {
+            withContext(coroutineDispatcher) {
+                emit(weatherDB.getDailyForecast().toDomain())
+            }
+        }
+        .flowOn(coroutineDispatcher)
 
     private fun getNextThreeDayForecast(forecast: Forecast): List<WeatherData> {
         val currentDate = forecast.weatherData[0].currentDate
@@ -75,5 +99,4 @@ class WeatherRepositoryImpl(
         //take last three will exclude today's forecast
         return threeDayForecast.takeLast(3)
     }
-
 }

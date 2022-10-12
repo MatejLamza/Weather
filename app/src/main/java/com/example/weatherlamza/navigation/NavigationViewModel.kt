@@ -14,4 +14,11 @@ class NavigationViewModel : ViewModel() {
                 .navigate(WeatherFragmentDirections.actionWeatherFragmentToSettingsFragment())
         }
     }
+
+    fun navigateToSearch(source: WeatherFragment) {
+        launch {
+            source.findNavController()
+                .navigate(WeatherFragmentDirections.actionWeatherFragmentToSearchFragment2())
+        }
+    }
 }

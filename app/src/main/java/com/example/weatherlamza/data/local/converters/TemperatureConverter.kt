@@ -1,9 +1,11 @@
 package com.example.weatherlamza.data.local.converters
 
 import androidx.room.TypeConverter
-import com.example.weatherlamza.data.models.Temperature
-import com.example.weatherlamza.data.models.Weather
+import com.example.weatherlamza.data.models.*
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Type
+
 
 class TemperatureConverter {
 
@@ -20,13 +22,13 @@ class TemperatureConverter {
     }
 
     @TypeConverter
-    fun fromWeather(value: Weather?): String? {
+    fun fromWind(value: Wind?): String? {
         return value?.let { gson.toJson(it) }
     }
 
     @TypeConverter
-    fun toWeather(temperatureString: String?): Weather? {
-        return temperatureString?.let { gson.fromJson(it, Weather::class.java) }
+    fun toWind(windString: String?): Wind? {
+        return windString?.let { gson.fromJson(it, Wind::class.java) }
     }
 
     @TypeConverter
@@ -37,7 +39,35 @@ class TemperatureConverter {
     @TypeConverter
     fun weatherListFromJson(json: String?): List<Weather>? {
         return if (json.isNullOrEmpty()) null
-        else gson.fromJson<List<Weather>>(json, Weather::class.java)
+        else {
+            val listType: Type = object : TypeToken<List<Weather?>?>() {}.type
+            return Gson().fromJson(json, listType)
+        }
     }
+
+    @TypeConverter
+    fun fromCity(value: City?): String? {
+        return value?.let { gson.toJson(it) }
+    }
+
+    @TypeConverter
+    fun toCity(cityString: String?): City? {
+        return cityString?.let { gson.fromJson(it, City::class.java) }
+    }
+
+    @TypeConverter
+    fun weatherDataToJson(value: List<WeatherData>?): String? {
+        return gson.toJson(value)
+    }
+
+    @TypeConverter
+    fun weatherDataFromJson(json: String?): List<WeatherData>? {
+        return if (json.isNullOrEmpty()) null
+        else {
+            val listType: Type = object : TypeToken<List<WeatherData?>?>() {}.type
+            return Gson().fromJson(json, listType)
+        }
+    }
+
 
 }
