@@ -1,26 +1,30 @@
 package com.example.weatherlamza
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.asLiveData
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
+import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.common.state.ConnectivityState
-import com.example.weatherlamza.data.local.SessionPrefs
 import com.example.weatherlamza.databinding.ActivityMainBinding
-import com.example.weatherlamza.utils.extensions.errorSnackBar
-import com.example.weatherlamza.utils.extensions.getNavController
-import com.example.weatherlamza.utils.extensions.infoSnackBar
+import com.example.weatherlamza.utils.extensions.*
 import com.example.weatherlamza.utils.services.InternetConnectivityService
 import com.example.weatherlamza.utils.workers.WeatherUpdateWorker
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.distinctUntilChanged
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.concurrent.TimeUnit
 
 
@@ -31,19 +35,18 @@ class MainActivity : AppCompatActivity() {
         const val WORKER_DATA_TAG = "worker_tag"
     }
 
-    private val sessionPrefs by inject<SessionPrefs>(SessionPrefs::class.java)
     private val connectivityService by lazy { InternetConnectivityService(this) }
-    private lateinit var binding: ActivityMainBinding
     private val navController: NavController by lazy { getNavController(R.id.mainContainer) }
+    private val mainViewModel by viewModel<MainViewModel>()
 
-
-    private val refreshWeatherInfoRequest =
-        PeriodicWorkRequestBuilder<WeatherUpdateWorker>(15, TimeUnit.MINUTES).build()
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private val workManager = WorkManager.getInstance(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -56,9 +59,27 @@ class MainActivity : AppCompatActivity() {
             val notificationManager = getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
         }
-
+        requestLastLocation()
         setUI()
         setObservers()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun requestLastLocation() {
+        checkPermissions(
+            BaseFragment.permissions,
+            onSuccess = {
+                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                    mainViewModel.currentLocation.value = location
+                }
+            },
+            onError = {
+                Toast.makeText(
+                    this,
+                    "Permissions not granted",
+                    Toast.LENGTH_SHORT
+                ).show()
+            })
     }
 
     private fun setUI() {
@@ -75,22 +96,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     private fun setObservers() {
-        sessionPrefs.observePermissionForNotifications().distinctUntilChanged().asLiveData()
-            .observe(this) { isPermitted ->
-                if (!isPermitted) workManager.cancelUniqueWork(WORKER_DATA_TAG)
-                else startUniquePeriodicWork()
-            }
         connectivityService.networkStatus.distinctUntilChanged().asLiveData().observe(this) {
             when (it) {
                 ConnectivityState.Available -> onNetworkAvailable()
                 ConnectivityState.Unavailable -> onNetworkLost()
             }
         }
+        mainViewModel.locationWithPermission.observe(this) {
+            if (!it.areNotificationsEnabled) workManager.cancelUniqueWork(WORKER_DATA_TAG)
+            else startUniquePeriodicWork(it.currentLocation)
+        }
     }
 
-    private fun startUniquePeriodicWork() {
+    private fun startUniquePeriodicWork(currentLocation: Location) {
+        val locationArray = arrayOf(currentLocation.latitude, currentLocation.longitude)
+
+        val data = Data.Builder().putDoubleArray("location", locationArray.toDoubleArray())
+            .build()
+
+        val refreshWeatherInfoRequest =
+            PeriodicWorkRequestBuilder<WeatherUpdateWorker>(1, TimeUnit.MINUTES).setInputData(data)
+                .build()
+
         workManager.enqueueUniquePeriodicWork(
             WORKER_DATA_TAG,
             ExistingPeriodicWorkPolicy.KEEP,

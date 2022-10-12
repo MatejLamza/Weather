@@ -27,6 +27,7 @@ fun Fragment.checkPermissions(
         }
 }
 
+
 fun Fragment.infoSnackBar(
     view: View, message: String,
     @BaseTransientBottomBar.Duration duration: Int = Snackbar.LENGTH_SHORT

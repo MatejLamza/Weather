@@ -38,10 +38,15 @@ class WeatherUpdateWorker(private val context: Context, workerParams: WorkerPara
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
             return@withContext runCatching {
+                val location = inputData.getDoubleArray("location")
                 var description = ""
-                weatherRepo.getWeather("Zagreb").collect { description = it.weather[0].description }
 
-                if (listOfWeathersToNotifyUser.contains(description)) {
+                if (location != null) {
+                    weatherRepo.getWeatherForCoordinates(location[0], location[1])
+                        .collect { description = it.weather[0].description }
+                }
+
+                if (!listOfWeathersToNotifyUser.contains(description)) {
                     notificationService.showNotification(title = "Weather warning", description)
                     return@withContext Result.success()
                 } else return@withContext Result.failure()
