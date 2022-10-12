@@ -8,7 +8,6 @@ import com.example.weatherlamza.data.models.Location
 import com.example.weatherlamza.data.models.WeatherData
 import com.example.weatherlamza.data.repositories.WeatherRepository
 import com.example.weatherlamza.utils.extensions.launchWithState
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 
 class WeatherViewModel(private val weatherRepo: WeatherRepository) : ViewModel() {
@@ -37,11 +36,6 @@ class WeatherViewModel(private val weatherRepo: WeatherRepository) : ViewModel()
                     weatherRepo.getForecast(location.latitude, location.longitude)
                 ) { location, forecast ->
                     return@combine location to forecast
-                }.catch {
-                    weatherRepo.getWeatherForCoordinates(location.latitude, location.longitude)
-                        .collect {
-                            _weather.value = it
-                        }
                 }.collect {
                     _weather.value = it.first
                     _dailyForecast.value = it.second.weatherData

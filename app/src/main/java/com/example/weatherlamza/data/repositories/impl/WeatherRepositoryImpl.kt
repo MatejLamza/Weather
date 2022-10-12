@@ -40,9 +40,7 @@ class WeatherRepositoryImpl(
         .onEach { location -> weatherDB.insertWeatherForecast(location.toEntity()) }
         .catch {
             withContext(coroutineDispatcher) {
-                emit(
-                    weatherDB.getWeatherForecast().toDomain()
-                )
+                emit(weatherDB.getWeatherForecast().toDomain())
             }
         }
         .flowOn(coroutineDispatcher)
@@ -50,26 +48,16 @@ class WeatherRepositoryImpl(
     override fun getCoordinates(cityName: String): Flow<Coordinates> = flow {
         emit(api.getLocationCoordinatesByName(cityName)[0])
     }
-        /* .catch { e ->
-             Log.d("bbb", "getCoordinates: $e")
-             throw IllegalStateException("City not found")
-         }*/
         .flowOn(coroutineDispatcher)
 
     override suspend fun getWeather(cityName: String): Flow<Location> =
         withContext(coroutineDispatcher) {
             val coordinates = getCoordinates(cityName).last()
             getWeatherForCoordinates(coordinates.lat, coordinates.lon)
-                .onStart {
-                    runCatching {
-                        recentSearchesDAO.insertRecentSearchQuery(RecentSearchesEntity(cityName))
-                    }
-                }
+                .onEach { recentSearchesDAO.insertRecentSearchQuery(RecentSearchesEntity(cityName)) }
                 .catch {
                     withContext(coroutineDispatcher) {
-                        emit(
-                            weatherDB.getWeatherForecast().toDomain()
-                        )
+                        emit(weatherDB.getWeatherForecast().toDomain())
                     }
                 }
                 .flowOn(coroutineDispatcher)
@@ -79,7 +67,14 @@ class WeatherRepositoryImpl(
         val forecast =
             api.getThreeDayForecast(lat, lon)
         emit(forecast.copy(weatherData = getNextThreeDayForecast(forecast)))
-    }.flowOn(coroutineDispatcher)
+    }
+        .onEach { weatherDB.insertDailyForecast(it.toEntity()) }
+        .catch {
+            withContext(coroutineDispatcher) {
+                emit(weatherDB.getDailyForecast().toDomain())
+            }
+        }
+        .flowOn(coroutineDispatcher)
 
     private fun getNextThreeDayForecast(forecast: Forecast): List<WeatherData> {
         val currentDate = forecast.weatherData[0].currentDate

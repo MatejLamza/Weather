@@ -4,7 +4,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.asLiveData
 import androidx.navigation.NavController
@@ -20,6 +19,7 @@ import com.example.weatherlamza.utils.extensions.getNavController
 import com.example.weatherlamza.utils.extensions.infoSnackBar
 import com.example.weatherlamza.utils.services.InternetConnectivityService
 import com.example.weatherlamza.utils.workers.WeatherUpdateWorker
+import kotlinx.coroutines.flow.distinctUntilChanged
 import org.koin.java.KoinJavaComponent.inject
 import java.util.concurrent.TimeUnit
 
@@ -77,13 +77,12 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun setObservers() {
-        sessionPrefs.observePermissionForNotifications().asLiveData().observe(this) { isPermitted ->
-            Log.d("bbb", "Are notifications permitted: $isPermitted ")
-            if (!isPermitted) workManager.cancelUniqueWork(WORKER_DATA_TAG)
-            else startUniquePeriodicWork()
-
-        }
-        connectivityService.networkStatus.asLiveData().observe(this) {
+        sessionPrefs.observePermissionForNotifications().distinctUntilChanged().asLiveData()
+            .observe(this) { isPermitted ->
+                if (!isPermitted) workManager.cancelUniqueWork(WORKER_DATA_TAG)
+                else startUniquePeriodicWork()
+            }
+        connectivityService.networkStatus.distinctUntilChanged().asLiveData().observe(this) {
             when (it) {
                 ConnectivityState.Available -> onNetworkAvailable()
                 ConnectivityState.Unavailable -> onNetworkLost()
