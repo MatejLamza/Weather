@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentWeatherBinding
 import com.example.weatherlamza.ui.weather.adapters.DailyWeatherForecastAdapter
+import com.example.weatherlamza.utils.extensions.changeBackgroundDependingOnTheTimeOfDay
 import com.example.weatherlamza.utils.extensions.checkPermissions
 import com.example.weatherlamza.utils.extensions.observeState
 import com.example.weatherlamza.utils.extensions.populateWithLocationData
@@ -45,12 +46,10 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
                 binding.populateWithLocationData(location, requireContext())
             }
             dailyForecast.observe(viewLifecycleOwner) { forecast ->
-                dailyForecastAdapter.dailyWeatherForecast = forecast
+                binding.changeBackgroundDependingOnTheTimeOfDay(forecast)
+                dailyForecastAdapter.dailyWeatherForecast = forecast.weatherData
             }
             weatherState.observeState(viewLifecycleOwner, this@WeatherFragment) {}
-            dailyForecast.observe(viewLifecycleOwner) {
-                dailyForecastAdapter.dailyWeatherForecast = it
-            }
         }
     }
 
