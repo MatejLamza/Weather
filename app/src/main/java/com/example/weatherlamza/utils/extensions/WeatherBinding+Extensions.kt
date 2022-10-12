@@ -3,11 +3,13 @@ package com.example.weatherlamza.utils.extensions
 import android.content.Context
 import androidx.core.content.ContextCompat
 import com.example.weatherlamza.R
+import com.example.weatherlamza.data.models.City
 import com.example.weatherlamza.data.models.Forecast
 import com.example.weatherlamza.data.models.Location
 import com.example.weatherlamza.databinding.FragmentWeatherBinding
 import org.joda.time.Instant
 import org.joda.time.LocalDateTime
+import org.joda.time.format.DateTimeFormat
 
 
 fun FragmentWeatherBinding.populateWithLocationData(currentLocation: Location, context: Context) {
@@ -24,14 +26,32 @@ fun FragmentWeatherBinding.populateWithLocationData(currentLocation: Location, c
         currentLocation.temperature.tempMin.toInt().toString()
     )
 
-    humidity.text = context.getString(
+    weatherDetails.humidity.text = context.getString(
         R.string.humidity, currentLocation.temperature.humidity.toInt().toString()
     )
-    pressure.text = context.getString(
+    weatherDetails.pressure.text = context.getString(
         R.string.pressure,
         currentLocation.temperature.pressure.toInt().toString()
     )
-    wind.text = context.getString(R.string.wind, currentLocation.wind.speed.toInt().toString())
+    weatherDetails.wind.text =
+        context.getString(R.string.wind, currentLocation.wind.speed.toInt().toString())
+}
+
+fun FragmentWeatherBinding.updateForecastUI(forecast: Forecast) {
+    changeBackgroundDependingOnTheTimeOfDay(forecast)
+    setSunriseSunset(forecast.city)
+}
+
+fun FragmentWeatherBinding.setSunriseSunset(city: City) {
+    val sunset = Instant.ofEpochSecond(city.sunset.toLong()).toDateTime().toLocalTime()
+    val sunrise = Instant.ofEpochSecond(city.sunrise.toLong()).toDateTime().toLocalTime()
+
+    val timeFormatter = DateTimeFormat.forPattern("HH:mm")
+    val sunriseStr = timeFormatter.print(sunrise)
+    val sunsetStr = timeFormatter.print(sunset)
+
+    sunsetSunriseContainer.sunrise.text = sunriseStr.toString()
+    sunsetSunriseContainer.sunset.text = sunsetStr.toString()
 }
 
 fun FragmentWeatherBinding.changeBackgroundDependingOnTheTimeOfDay(forecast: Forecast) {

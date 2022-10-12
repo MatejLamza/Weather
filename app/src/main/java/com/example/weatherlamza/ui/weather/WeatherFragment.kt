@@ -7,10 +7,10 @@ import android.widget.Toast
 import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentWeatherBinding
 import com.example.weatherlamza.ui.weather.adapters.DailyWeatherForecastAdapter
-import com.example.weatherlamza.utils.extensions.changeBackgroundDependingOnTheTimeOfDay
 import com.example.weatherlamza.utils.extensions.checkPermissions
 import com.example.weatherlamza.utils.extensions.observeState
 import com.example.weatherlamza.utils.extensions.populateWithLocationData
+import com.example.weatherlamza.utils.extensions.updateForecastUI
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -46,7 +46,7 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
                 binding.populateWithLocationData(location, requireContext())
             }
             dailyForecast.observe(viewLifecycleOwner) { forecast ->
-                binding.changeBackgroundDependingOnTheTimeOfDay(forecast)
+                binding.updateForecastUI(forecast)
                 dailyForecastAdapter.dailyWeatherForecast = forecast.weatherData
             }
             weatherState.observeState(viewLifecycleOwner, this@WeatherFragment) {}
