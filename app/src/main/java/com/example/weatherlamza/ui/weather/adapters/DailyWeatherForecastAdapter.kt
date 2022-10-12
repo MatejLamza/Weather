@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherlamza.R
 import com.example.weatherlamza.data.models.WeatherData
 import com.example.weatherlamza.databinding.ItemWeatherBinding
+import com.example.weatherlamza.utils.extensions.currentDate
+import com.example.weatherlamza.utils.extensions.toNamedDayOfTheWeek
 
 class DailyWeatherForecastAdapter :
     RecyclerView.Adapter<DailyWeatherForecastAdapter.DailyWeatherForecastViewHolder>() {
@@ -41,7 +43,7 @@ class DailyWeatherForecastAdapter :
                 field = value
                 if (value != null) {
                     with(binding) {
-                        dayOfTheWeek.text = "Today"
+                        dayOfTheWeek.text = value.currentDate.dayOfWeek.toNamedDayOfTheWeek()
                         humidity.text = value.temperature.humidity.toInt().toString()
                         temperatureHigh.text = binding.root.context.getString(
                             R.string.temperature_low,

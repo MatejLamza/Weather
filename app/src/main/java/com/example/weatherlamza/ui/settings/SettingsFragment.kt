@@ -1,7 +1,6 @@
 package com.example.weatherlamza.ui.settings
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentSettingsBinding
@@ -21,7 +20,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>(FragmentSettingsB
     private fun setObservers() {
         with(settingsViewModel) {
             areNotificationsEnabled.observe(viewLifecycleOwner) {
-                Log.d(TAG, "Are notifications enabled: $it")
                 binding.notificationPermissions.isChecked = it
             }
         }
