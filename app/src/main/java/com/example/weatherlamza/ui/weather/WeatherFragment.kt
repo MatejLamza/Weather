@@ -67,20 +67,17 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
         checkPermissions(permissions,
             onSuccess = {
                 fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                    weatherViewModel.getWeather(location)
+                    weatherViewModel.getWeather(
+                        location
+                    )
                 }
             },
             onError = {
                 Toast.makeText(
                     requireContext(),
-                    "Permissions not granted",
-                    Toast.LENGTH_SHORT
+                    "Please enable permissions to get forecast for current location",
+                    Toast.LENGTH_LONG
                 ).show()
             })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        requestLastLocation()
     }
 }

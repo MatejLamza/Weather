@@ -70,7 +70,11 @@ class MainActivity : AppCompatActivity() {
                 }
             },
             onError = {
-                Toast.makeText(this, "Permissions not granted", Toast.LENGTH_SHORT)
+                Toast.makeText(
+                    this,
+                    "Please enable permissions to get forecast for current location",
+                    Toast.LENGTH_SHORT
+                )
                     .show()
             })
     }
