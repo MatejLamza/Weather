@@ -5,19 +5,19 @@
 
     <item
         android:id="@+id/weatherFragment"
-        android:icon="@drawable/ic_baseline_location_on_24"
+        android:icon="@drawable/ic_location_icon"
         android:title="Current weather"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/searchFragment"
-        android:icon="@drawable/ic_baseline_search_24"
+        android:icon="@drawable/ic_search_icon"
         android:title="Search"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/settingsFragment"
-        android:icon="@drawable/ic_baseline_settings_24"
+        android:icon="@drawable/ic_settings_icon"
         android:title="Settings"
         app:showAsAction="always" />
 

@@ -19,12 +19,14 @@ class WeatherUpdateWorker(private val context: Context, workerParams: WorkerPara
 
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
-            return@withContext kotlin.runCatching {
+            return@withContext runCatching {
                 var description = ""
                 weatherRepo.getWeather("Zagreb").collect {
-                    description = it.weather.get(0).description ?: ""
+                    description = it.weather[0].description ?: ""
                     Log.d("bbb", "API CALL RESULT: ${it.temperature.temperature}")
                 }
+                val listOfDescriptionsToNotify =
+                    listOf("shower rain", "rain", "thunderstorm", "snow", "drizzle")
                 notificationService.showNotification(title = "Weather warning", description)
                 Result.success()
             }.getOrDefault(Result.failure())
