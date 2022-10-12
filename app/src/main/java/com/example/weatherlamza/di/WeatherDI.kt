@@ -15,6 +15,7 @@ class WeatherDI(private val application: Application) {
     private val modules: List<Module> = listOf(
         appModule,
         databaseModule,
+        dialogModule,
         networkModule,
         repositoryModule,
         viewModelModule

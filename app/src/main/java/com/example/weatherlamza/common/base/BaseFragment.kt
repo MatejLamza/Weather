@@ -2,15 +2,20 @@ package com.example.weatherlamza.common.base
 
 import android.Manifest
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
+import com.example.weatherlamza.R
 import com.example.weatherlamza.navigation.NavigationViewModel
 import com.example.weatherlamza.utils.ViewBindingInflate
 import com.example.weatherlamza.utils.extensions.errorSnackBar
+import com.example.weatherlamza.utils.extensions.gone
+import com.example.weatherlamza.utils.extensions.visible
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 open class BaseFragment<VB : ViewBinding>(
     private val inflate: ViewBindingInflate<VB>,
@@ -28,6 +33,7 @@ open class BaseFragment<VB : ViewBinding>(
     val binding: VB get() = _binding!!
 
     protected val navigation by viewModel<NavigationViewModel>()
+    protected val progressDialog: ProgressDialog by inject { parametersOf(childFragmentManager) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,12 +44,24 @@ open class BaseFragment<VB : ViewBinding>(
         return binding.root
     }
 
-    override fun dismissLoading() {
-        Log.d(TAG, "dismissLoading ... ")
+    override fun onViewCreated(view: android.view.View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        view.findViewById<android.view.View>(R.id.progressIndicator)?.gone()
     }
 
     override fun showLoading() {
-        Log.d(TAG, "Loading .... ")
+        view?.findViewById<android.view.View>(R.id.progressIndicator)?.visible()
+            ?: progressDialog.show()
+    }
+
+    override fun dismissLoading() {
+        val indicator = view?.findViewById<android.view.View>(R.id.progressIndicator)
+        if (indicator != null) {
+            indicator.gone()
+            AlertDialog.Builder(requireContext()).create()
+        } else {
+            runCatching { progressDialog.dismiss() }
+        }
     }
 
     override fun showError(error: Throwable) {
@@ -52,6 +70,7 @@ open class BaseFragment<VB : ViewBinding>(
 
     override fun onDestroyView() {
         super.onDestroyView()
+        runCatching { progressDialog.dismiss() }
         _binding = null
     }
 }
