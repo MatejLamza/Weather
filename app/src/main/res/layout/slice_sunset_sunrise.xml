@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/sunrise_sunset_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -19,7 +20,7 @@
         android:id="@+id/sunrise_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sunrise"
+        android:text="@string/sunrise"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="@id/horizontal_constraint_half"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,11 +30,11 @@
         android:id="@+id/sunrise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="07:18"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="@id/horizontal_constraint_half"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sunrise_label" />
+        app:layout_constraintTop_toBottomOf="@id/sunrise_label"
+        tools:text="07:18" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="wrap_content"
@@ -48,7 +49,7 @@
         android:id="@+id/sunset_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sunset"
+        android:text="@string/sunset"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/horizontal_constraint_half"
@@ -58,11 +59,11 @@
         android:id="@+id/sunset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="07:18"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/horizontal_constraint_half"
-        app:layout_constraintTop_toBottomOf="@id/sunset_label" />
+        app:layout_constraintTop_toBottomOf="@id/sunset_label"
+        tools:text="07:18" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="wrap_content"

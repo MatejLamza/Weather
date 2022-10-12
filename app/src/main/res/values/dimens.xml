@@ -3,4 +3,9 @@
     <dimen name="margin_medium">8dp</dimen>
     <dimen name="margin_default">16dp</dimen>
     <dimen name="card_corner_radius">24dp</dimen>
+    <dimen name="h1">24sp</dimen>
+    <dimen name="body1">20sp</dimen>
+    <dimen name="margin_big">32dp</dimen>
+    <dimen name="icon_small">15dp</dimen>
+    <dimen name="icon_default">40dp</dimen>
 </resources>

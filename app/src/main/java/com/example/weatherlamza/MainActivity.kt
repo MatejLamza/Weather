@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity() {
             .build()
 
         val refreshWeatherInfoRequest =
-            PeriodicWorkRequestBuilder<WeatherUpdateWorker>(1, TimeUnit.MINUTES).setInputData(data)
+            PeriodicWorkRequestBuilder<WeatherUpdateWorker>(2, TimeUnit.MINUTES).setInputData(data)
                 .build()
 
         workManager.enqueueUniquePeriodicWork(

@@ -1,6 +1,7 @@
 package com.example.weatherlamza.utils.workers
 
 import android.content.Context
+import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.weatherlamza.data.repositories.WeatherRepository
@@ -38,6 +39,7 @@ class WeatherUpdateWorker(private val context: Context, workerParams: WorkerPara
     override suspend fun doWork(): Result {
         return withContext(Dispatchers.IO) {
             return@withContext runCatching {
+                Log.d("bbb", "doWork: ")
                 val location = inputData.getDoubleArray("location")
                 var description = ""
 

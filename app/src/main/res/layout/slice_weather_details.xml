@@ -38,8 +38,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/wind_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/icon_default"
+        android:layout_height="@dimen/icon_default"
         android:layout_marginTop="@dimen/margin_medium"
         android:src="@drawable/ic_wind"
         app:layout_constraintEnd_toEndOf="@id/horizontal_constraint_second"
@@ -65,8 +65,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/pressure_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/icon_default"
+        android:layout_height="@dimen/icon_default"
         android:layout_marginTop="@dimen/margin_medium"
         android:src="@drawable/ic_pressure"
         app:layout_constraintEnd_toEndOf="parent"
