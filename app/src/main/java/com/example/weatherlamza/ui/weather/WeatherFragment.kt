@@ -2,19 +2,18 @@ package com.example.weatherlamza.ui.weather
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentWeatherV2Binding
 import com.example.weatherlamza.ui.weather.adapters.DailyWeatherForecastAdapter
 import com.example.weatherlamza.ui.weather.adapters.HourlyWeatherForecastAdapter
-import com.example.weatherlamza.utils.extensions.checkPermissions
-import com.example.weatherlamza.utils.extensions.observeState
-import com.example.weatherlamza.utils.extensions.populateWithLocationData
-import com.example.weatherlamza.utils.extensions.updateForecastUI
+import com.example.weatherlamza.utils.extensions.*
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.math.abs
 
 class WeatherFragment : BaseFragment<FragmentWeatherV2Binding>(FragmentWeatherV2Binding::inflate) {
 
@@ -62,9 +61,24 @@ class WeatherFragment : BaseFragment<FragmentWeatherV2Binding>(FragmentWeatherV2
 
     private fun setupListeners() {
         with(binding) {
-            weatherContent.setOnRefreshListener {
-                requestLastLocation()
-                binding.weatherContent.isRefreshing = false
+            /* weatherContent.setOnRefreshListener {
+                 requestLastLocation()
+                 binding.weatherContent.isRefreshing = false
+             }*/
+
+            topBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+                val isCollapsed = abs(verticalOffset) - appBarLayout!!.totalScrollRange == 0
+
+                Log.d(TAG, "vertical offset $verticalOffset: ")
+
+                if (isCollapsed) {
+                    Log.d("bbb", "tu sam is collapsed: ")
+                    toolbar.visible()
+                } else {
+                    Log.d("bbb", "tu sam is displayan je: ")
+
+                    toolbar.gone()
+                }
             }
         }
     }

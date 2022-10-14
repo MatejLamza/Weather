@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/margin_default"
-    android:background="@drawable/rounded_corner_background"
+    android:background="@drawable/rounded_corner_dark"
     android:padding="@dimen/margin_default">
 
     <androidx.constraintlayout.widget.Guideline
@@ -39,7 +39,7 @@
     <androidx.appcompat.widget.AppCompatImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_sunrise"
+        android:src="@drawable/ic_sunrise_new"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/horizontal_constraint_half"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,7 +69,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/margin_default"
-        android:src="@drawable/ic_sunset"
+        android:src="@drawable/ic_sunset_new"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/horizontal_constraint_half"

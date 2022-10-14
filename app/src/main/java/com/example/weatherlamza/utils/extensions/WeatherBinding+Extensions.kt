@@ -1,7 +1,6 @@
 package com.example.weatherlamza.utils.extensions
 
 import android.content.Context
-import androidx.core.content.ContextCompat
 import com.example.weatherlamza.R
 import com.example.weatherlamza.data.models.City
 import com.example.weatherlamza.data.models.Forecast
@@ -13,10 +12,10 @@ import org.joda.time.format.DateTimeFormat
 
 
 fun FragmentWeatherV2Binding.populateWithLocationData(currentLocation: Location, context: Context) {
-    weatherInfo.location.text = currentLocation.name
+   /* weatherInfo.location.text = currentLocation.name
     weatherInfo.temperature.text = currentLocation.temperature.temperature.toInt().toString()
     weatherInfo.feelsLike.text =
-        "${currentLocation.temperature.tempMax}° / ${currentLocation.temperature.tempMin}° Feels like 12°"
+        "${currentLocation.temperature.tempMax}° / ${currentLocation.temperature.tempMin}° Feels like 12°"*/
 
     weatherDetails.humidity.text = context.getString(
         R.string.humidity, currentLocation.temperature.humidity.toInt().toString()
@@ -43,10 +42,12 @@ fun FragmentWeatherV2Binding.setSunriseSunset(city: City) {
     sunsetSunriseContainer.sunset.text = sunsetStr.toString()
 }
 
+/*
 fun FragmentWeatherV2Binding.changeBackgroundDependingOnTheTimeOfDay(forecast: Forecast) {
     weatherContent.background =
         ContextCompat.getDrawable(root.context, getCorrectBackgroundForTimeOfDay(forecast))
 }
+*/
 
 private fun getCorrectBackgroundForTimeOfDay(forecast: Forecast): Int {
     val currentTime = LocalDateTime.now().toLocalTime()

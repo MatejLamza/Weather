@@ -52,7 +52,7 @@ class TestFragment :
 
     private fun setUI() {
         with(binding) {
-            recentSearches.adapter = recentSearchesAdapter
+//            recentSearches.adapter = recentSearchesAdapter
             recentSearchesAdapter.recentlySearchedQueries = mockListSearches
         }
     }

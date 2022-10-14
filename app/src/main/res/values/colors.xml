@@ -11,4 +11,5 @@
     <color name="highlight_purple">#31247A</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="light_blue">#5fa6ed</color>
+    <color name="dark_grey">#161616</color>
 </resources>

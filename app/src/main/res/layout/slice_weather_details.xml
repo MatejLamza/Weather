@@ -4,7 +4,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:background="@drawable/rounded_corner_background"
+    android:background="@drawable/rounded_corner_dark"
     android:paddingVertical="10dp">
 
     <androidx.appcompat.widget.AppCompatImageView
