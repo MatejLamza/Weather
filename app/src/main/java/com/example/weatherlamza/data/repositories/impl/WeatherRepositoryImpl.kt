@@ -33,6 +33,9 @@ class WeatherRepositoryImpl(
     private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WeatherRepository {
 
+    override fun getHourlyForecast(lat: Double, lon: Double): Flow<List<WeatherData>> = flow {
+        emit(api.getThreeDayForecast(lat, lon).weatherData)
+    }
 
     override fun getWeatherForCoordinates(lat: Double, lon: Double): Flow<Location> = flow {
         emit(api.getWeatherForCoordinates(lat, lon))

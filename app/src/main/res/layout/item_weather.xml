@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:background="#00FFFFFF"
     android:padding="@dimen/margin_default"
-    tools:background="@color/black">
+    >
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/day_of_the_week"

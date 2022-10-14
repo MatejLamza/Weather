@@ -6,43 +6,32 @@ import com.example.weatherlamza.R
 import com.example.weatherlamza.data.models.City
 import com.example.weatherlamza.data.models.Forecast
 import com.example.weatherlamza.data.models.Location
-import com.example.weatherlamza.databinding.FragmentWeatherBinding
+import com.example.weatherlamza.databinding.FragmentWeatherV2Binding
 import org.joda.time.Instant
 import org.joda.time.LocalDateTime
 import org.joda.time.format.DateTimeFormat
 
 
-fun FragmentWeatherBinding.populateWithLocationData(currentLocation: Location, context: Context) {
-    location.text = currentLocation.name
-    currentTemperature.text = currentLocation.temperature.temperature.toInt().toString()
-    description.text = currentLocation.weather.first().description.uppercase()
-
-    temperatureHigh.text = context.getString(
-        R.string.temperature_high,
-        currentLocation.temperature.tempMax.toInt().toString()
-    )
-    temperatureLow.text = context.getString(
-        R.string.temperature_low,
-        currentLocation.temperature.tempMin.toInt().toString()
-    )
+fun FragmentWeatherV2Binding.populateWithLocationData(currentLocation: Location, context: Context) {
+    weatherInfo.location.text = currentLocation.name
+    weatherInfo.temperature.text = currentLocation.temperature.temperature.toInt().toString()
+    weatherInfo.feelsLike.text =
+        "${currentLocation.temperature.tempMax}° / ${currentLocation.temperature.tempMin}° Feels like 12°"
 
     weatherDetails.humidity.text = context.getString(
         R.string.humidity, currentLocation.temperature.humidity.toInt().toString()
     )
-    weatherDetails.pressure.text = context.getString(
-        R.string.pressure,
-        currentLocation.temperature.pressure.toInt().toString()
-    )
+    weatherDetails.uvIndex.text = "Low"
     weatherDetails.wind.text =
         context.getString(R.string.wind, currentLocation.wind.speed.toInt().toString())
 }
 
-fun FragmentWeatherBinding.updateForecastUI(forecast: Forecast) {
-    changeBackgroundDependingOnTheTimeOfDay(forecast)
+fun FragmentWeatherV2Binding.updateForecastUI(forecast: Forecast) {
+//    changeBackgroundDependingOnTheTimeOfDay(forecast)
     setSunriseSunset(forecast.city)
 }
 
-fun FragmentWeatherBinding.setSunriseSunset(city: City) {
+fun FragmentWeatherV2Binding.setSunriseSunset(city: City) {
     val sunset = Instant.ofEpochSecond(city.sunset.toLong()).toDateTime().toLocalTime()
     val sunrise = Instant.ofEpochSecond(city.sunrise.toLong()).toDateTime().toLocalTime()
 
@@ -54,7 +43,7 @@ fun FragmentWeatherBinding.setSunriseSunset(city: City) {
     sunsetSunriseContainer.sunset.text = sunsetStr.toString()
 }
 
-fun FragmentWeatherBinding.changeBackgroundDependingOnTheTimeOfDay(forecast: Forecast) {
+fun FragmentWeatherV2Binding.changeBackgroundDependingOnTheTimeOfDay(forecast: Forecast) {
     weatherContent.background =
         ContextCompat.getDrawable(root.context, getCorrectBackgroundForTimeOfDay(forecast))
 }

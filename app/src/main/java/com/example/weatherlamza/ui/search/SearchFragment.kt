@@ -8,10 +8,7 @@ import com.example.weatherlamza.common.base.BaseFragment
 import com.example.weatherlamza.databinding.FragmentSearchBinding
 import com.example.weatherlamza.ui.search.adapters.RecentSearchesAdapter
 import com.example.weatherlamza.ui.weather.adapters.DailyWeatherForecastAdapter
-import com.example.weatherlamza.utils.extensions.gone
 import com.example.weatherlamza.utils.extensions.observeState
-import com.example.weatherlamza.utils.extensions.populateWithLocationData
-import com.example.weatherlamza.utils.extensions.visible
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding::inflate),
@@ -36,8 +33,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
     private fun setUI() {
         with(binding) {
             search.setOnQueryTextListener(this@SearchFragment)
-            recentContainer.recentSearchedItems.adapter = recentSearchesAdapter
-            resultContainer.dailyForecast.adapter = dailyForecastAdapter
+//            recentContainer.recentSearchedItems.adapter = recentSearchesAdapter
+//            resultContainer.dailyForecast.adapter = dailyForecastAdapter
         }
     }
 
@@ -53,7 +50,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
             }
 
             weather.observe(viewLifecycleOwner) {
-                binding.resultContainer.populateWithLocationData(it, requireContext())
+//                binding.resultContainer.populateWithLocationData(it, requireContext())
             }
 
             forecast.observe(viewLifecycleOwner) {
@@ -98,12 +95,12 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(FragmentSearchBinding
     private fun onStateChanged(state: State) {
         when (state) {
             State.RECENT -> {
-                binding.resultContainer.weatherContent.gone()
-                binding.recentContainer.container.visible()
+//                binding.resultContainer.weatherContent.gone()
+//                binding.recentContainer.container.visible()
             }
             State.RESULT -> {
-                binding.recentContainer.container.gone()
-                binding.resultContainer.weatherContent.visible()
+//                binding.recentContainer.container.gone()
+//                binding.resultContainer.weatherContent.visible()
             }
         }
     }

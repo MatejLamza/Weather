@@ -5,8 +5,9 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.example.weatherlamza.common.base.BaseFragment
-import com.example.weatherlamza.databinding.FragmentWeatherBinding
+import com.example.weatherlamza.databinding.FragmentWeatherV2Binding
 import com.example.weatherlamza.ui.weather.adapters.DailyWeatherForecastAdapter
+import com.example.weatherlamza.ui.weather.adapters.HourlyWeatherForecastAdapter
 import com.example.weatherlamza.utils.extensions.checkPermissions
 import com.example.weatherlamza.utils.extensions.observeState
 import com.example.weatherlamza.utils.extensions.populateWithLocationData
@@ -15,11 +16,12 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBinding::inflate) {
+class WeatherFragment : BaseFragment<FragmentWeatherV2Binding>(FragmentWeatherV2Binding::inflate) {
 
     private val weatherViewModel by viewModel<WeatherViewModel>()
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val dailyForecastAdapter by lazy { DailyWeatherForecastAdapter() }
+    private val hourlyForecastAdapter by lazy { HourlyWeatherForecastAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +40,7 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
     private fun setUI() {
         with(binding) {
             dailyForecast.adapter = dailyForecastAdapter
+            hourlyForecastList.adapter = hourlyForecastAdapter
         }
     }
 
@@ -49,6 +52,9 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding>(FragmentWeatherBind
             dailyForecast.observe(viewLifecycleOwner) { forecast ->
                 binding.updateForecastUI(forecast)
                 dailyForecastAdapter.dailyWeatherForecast = forecast.weatherData
+            }
+            hourlyForecast.observe(viewLifecycleOwner) {
+                hourlyForecastAdapter.hourlyWeatherForecast = it
             }
             weatherState.observeState(viewLifecycleOwner, this@WeatherFragment) {}
         }

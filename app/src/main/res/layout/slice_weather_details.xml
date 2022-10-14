@@ -1,88 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="100dp"
     android:background="@drawable/rounded_corner_background"
-    android:padding="@dimen/margin_medium"
-    app:layout_constraintTop_toBottomOf="@id/temperature_low">
+    android:paddingVertical="10dp">
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/humidity_icon"
+        android:id="@+id/uv_index_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="@dimen/margin_medium"
-        android:src="@drawable/ic_humidity"
-        app:layout_constraintEnd_toEndOf="@id/horizontal_constraint"
+        android:src="@drawable/ic_clear_sky"
+        app:layout_constraintEnd_toEndOf="@id/horizontal_constraint_first_third"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/humidity"
+        android:id="@+id/label_uv_index"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@id/horizontal_constraint"
+        android:layout_marginTop="4dp"
+        android:text="UV index"
+        app:layout_constraintEnd_toEndOf="@id/horizontal_constraint_first_third"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/humidity_icon"
-        tools:text="33%" />
+        app:layout_constraintTop_toBottomOf="@id/uv_index_icon" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/uv_index"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Low"
+        app:layout_constraintEnd_toEndOf="@id/horizontal_constraint_first_third"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_uv_index" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontal_constraint"
+        android:id="@+id/horizontal_constraint_first_third"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.33" />
 
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        app:layout_constraintStart_toStartOf="@id/horizontal_constraint_first_third" />
+
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/wind_icon"
-        android:layout_width="@dimen/icon_default"
-        android:layout_height="@dimen/icon_default"
-        android:layout_marginTop="@dimen/margin_medium"
-        android:src="@drawable/ic_wind"
-        app:layout_constraintEnd_toEndOf="@id/horizontal_constraint_second"
-        app:layout_constraintStart_toStartOf="@id/horizontal_constraint"
+        android:id="@+id/humidity_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_humidity"
+        app:layout_constraintEnd_toEndOf="@id/horizontal_constraint_second_third"
+        app:layout_constraintStart_toStartOf="@id/horizontal_constraint_first_third"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/wind"
+        android:id="@+id/label_humidity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@id/horizontal_constraint_second"
-        app:layout_constraintStart_toStartOf="@id/horizontal_constraint"
-        app:layout_constraintTop_toBottomOf="@id/wind_icon"
-        tools:text="30 kmh" />
+        android:layout_marginTop="4dp"
+        android:text="Humidity"
+        app:layout_constraintEnd_toEndOf="@id/horizontal_constraint_second_third"
+        app:layout_constraintStart_toStartOf="@id/horizontal_constraint_first_third"
+        app:layout_constraintTop_toBottomOf="@id/uv_index_icon" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/humidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="90 %"
+        app:layout_constraintEnd_toEndOf="@id/horizontal_constraint_second_third"
+        app:layout_constraintStart_toStartOf="@id/horizontal_constraint_first_third"
+        app:layout_constraintTop_toBottomOf="@id/label_uv_index" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontal_constraint_second"
+        android:id="@+id/horizontal_constraint_second_third"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.66" />
 
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        app:layout_constraintStart_toStartOf="@id/horizontal_constraint_second_third" />
+
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/pressure_icon"
-        android:layout_width="@dimen/icon_default"
-        android:layout_height="@dimen/icon_default"
-        android:layout_marginTop="@dimen/margin_medium"
-        android:src="@drawable/ic_pressure"
+        android:id="@+id/wind_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_wind"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/horizontal_constraint_second"
+        app:layout_constraintStart_toStartOf="@id/horizontal_constraint_second_third"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/pressure"
+        android:id="@+id/label_wind"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
+        android:layout_marginTop="4dp"
+        android:text="Wind"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/horizontal_constraint_second"
-        app:layout_constraintTop_toBottomOf="@id/pressure_icon"
-        tools:text="1032 hpa" />
+        app:layout_constraintStart_toStartOf="@id/horizontal_constraint_second_third"
+        app:layout_constraintTop_toBottomOf="@id/wind_icon" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/wind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3 km/h"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/horizontal_constraint_second_third"
+        app:layout_constraintTop_toBottomOf="@id/label_wind" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-

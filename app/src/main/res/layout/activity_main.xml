@@ -14,28 +14,16 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/main_nav" />
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="0dp"
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigationBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin_default"
-        android:layout_marginBottom="@dimen/margin_default"
-        android:elevation="10dp"
-        app:cardCornerRadius="24dp"
+        android:background="@color/transparent"
+        app:itemIconSize="40dp"
+        app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/navigationBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/transparent"
-            app:itemIconSize="40dp"
-            app:labelVisibilityMode="unlabeled"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:menu="@menu/main_menu" />
-
-    </androidx.cardview.widget.CardView>
+        app:menu="@menu/main_menu" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
