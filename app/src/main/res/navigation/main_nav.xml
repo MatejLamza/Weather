@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_nav"
-    app:startDestination="@id/weatherFragment">
+    app:startDestination="@id/testFragment">
 
     <fragment
         android:id="@+id/weatherFragment"
@@ -23,4 +23,8 @@
         android:id="@+id/searchFragment"
         android:name="com.example.weatherlamza.ui.search.SearchFragment"
         android:label="SearchFragment" />
+    <fragment
+        android:id="@+id/testFragment"
+        android:name="com.example.weatherlamza.ui.TestFragment"
+        android:label="TestFragment" />
 </navigation>

@@ -17,6 +17,8 @@
     <string name="common_clear">Clear</string>
     <string name="sunrise">Sunrise</string>
     <string name="sunset">Sunset</string>
+    <string name="open">Open</string>
+    <string name="clsoe">Close</string>
 
 
 </resources>
